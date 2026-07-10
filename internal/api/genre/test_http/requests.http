@@ -1,0 +1,2 @@
+### List Genre
+GET http://localhost:8001/genre/list?offset=0&limit=20
