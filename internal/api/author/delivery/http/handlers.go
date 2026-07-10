@@ -1,7 +1,9 @@
 package http
 
 import (
+	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/Leli2004/API_Go_biblioteca/internal/api/author/usecase"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
@@ -38,5 +40,76 @@ func (h *Handler) List() echo.HandlerFunc {
 		}
 
 		return c.JSON(helpers.REPONSE_HTTP_OK, resp)
+	}
+}
+
+func (h *Handler) Get() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
+		}
+
+		err, resp := h.authorUC.Get(id)
+		if err != nil {
+			if strings.Contains(err.Error(), "no rows in result") {
+				return c.JSON(http.StatusNotFound, map[string]string{"error": "author not found"})
+			}
+			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
+		}
+
+		return c.JSON(helpers.REPONSE_HTTP_OK, resp)
+	}
+}
+
+func (h *Handler) Create() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input entity.Author
+		if err := c.Bind(&input); err != nil {
+			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
+		}
+
+		err, resp := h.authorUC.Create(input)
+		if err != nil {
+			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
+		}
+
+		return c.JSON(helpers.REPONSE_HTTP_OK, resp)
+	}
+}
+
+func (h *Handler) Update() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
+		}
+
+		var input entity.Author
+		if err := c.Bind(&input); err != nil {
+			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
+		}
+
+		err, resp := h.authorUC.Update(id, input)
+		if err != nil {
+			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
+		}
+
+		return c.JSON(helpers.REPONSE_HTTP_OK, resp)
+	}
+}
+
+func (h *Handler) Delete() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
+		}
+
+		if err := h.authorUC.Delete(id); err != nil {
+			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
+		}
+
+		return c.JSON(helpers.REPONSE_HTTP_OK, map[string]string{"status": "deleted"})
 	}
 }

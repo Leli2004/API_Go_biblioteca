@@ -1,3 +1,24 @@
-
 ### List Author
 GET http://localhost:8001/author/list?offset=0&limit=20
+
+### Get Author
+GET http://localhost:8001/author/1
+
+### Create Author
+POST http://localhost:8001/author
+Content-Type: application/json
+
+{
+  "name": "Ana Paula Maia"
+}
+
+### Update Author
+PUT http://localhost:8001/author/1
+Content-Type: application/json
+
+{
+  "name": "Itamar Vieira Junior"
+}
+
+### Delete Author
+DELETE http://localhost:8001/author/1

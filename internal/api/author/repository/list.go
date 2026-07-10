@@ -37,6 +37,6 @@ var listSql = `
 			created_at,
 			updated_at
 		FROM biblioteca.authors
-		OFFSET $1
-		LIMIT $2
+		ORDER BY id DESC
+		OFFSET $1 LIMIT $2
 	`
