@@ -1,4 +1,4 @@
-package publisher
+package user
 
 import "github.com/labstack/echo"
 

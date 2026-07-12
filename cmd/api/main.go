@@ -13,6 +13,15 @@ import (
 	genreHttp "github.com/Leli2004/API_Go_biblioteca/internal/api/genre/delivery/http"
 	genreRepository "github.com/Leli2004/API_Go_biblioteca/internal/api/genre/repository"
 	genreUseCase "github.com/Leli2004/API_Go_biblioteca/internal/api/genre/usecase"
+	publisherHttp "github.com/Leli2004/API_Go_biblioteca/internal/api/publisher/delivery/http"
+	publisherRepository "github.com/Leli2004/API_Go_biblioteca/internal/api/publisher/repository"
+	publisherUseCase "github.com/Leli2004/API_Go_biblioteca/internal/api/publisher/usecase"
+	bookHttp "github.com/Leli2004/API_Go_biblioteca/internal/api/book/delivery/http"
+	bookRepository "github.com/Leli2004/API_Go_biblioteca/internal/api/book/repository"
+	bookUseCase "github.com/Leli2004/API_Go_biblioteca/internal/api/book/usecase"
+	userHttp "github.com/Leli2004/API_Go_biblioteca/internal/api/user/delivery/http"
+	userRepository "github.com/Leli2004/API_Go_biblioteca/internal/api/user/repository"
+	userUseCase "github.com/Leli2004/API_Go_biblioteca/internal/api/user/usecase"
 )
 
 func main() {
@@ -39,6 +48,24 @@ func main() {
 	genreUC := genreUseCase.NewUseCase(genreRepo)
 	genreHandler := genreHttp.NewHandler(genreUC)
 	genreHttp.MapRoutes(e, genreHandler)
+
+	// Publisher
+	publisherRepo := publisherRepository.NewRepository(dbSqlx)
+	publisherUC := publisherUseCase.NewUseCase(publisherRepo)
+	publisherHandler := publisherHttp.NewHandler(publisherUC)
+	publisherHttp.MapRoutes(e, publisherHandler)
+
+	// Book
+	bookRepo := bookRepository.NewRepository(dbSqlx)
+	bookUC := bookUseCase.NewUseCase(bookRepo)
+	bookHandler := bookHttp.NewHandler(bookUC)
+	bookHttp.MapRoutes(e, bookHandler)
+
+	// User
+	userRepo := userRepository.NewRepository(dbSqlx)
+	userUC := userUseCase.NewUseCase(userRepo)
+	userHandler := userHttp.NewHandler(userUC)
+	userHttp.MapRoutes(e, userHandler)
 
 	e.Start(fmt.Sprintf(":%s", config.GetServerPort()))
 }

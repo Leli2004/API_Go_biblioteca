@@ -1,0 +1,30 @@
+### List Book
+GET http://localhost:8001/book/list?offset=0&limit=20
+
+### Get Book
+GET http://localhost:8001/book/1
+
+### Create Book
+POST http://localhost:8001/book
+Content-Type: application/json
+
+{
+  "publisher_id": 1,
+  "title": "O Poder do Hábito",
+  "publication_year": 2012,
+  "description": "Livro sobre hábitos e mudança de comportamento."
+}
+
+### Update Book
+PUT http://localhost:8001/book/1
+Content-Type: application/json
+
+{
+  "publisher_id": 1,
+  "title": "O Poder do Hábito - Edição Atualizada",
+  "publication_year": 2012,
+  "description": "Edição atualizada com novos exemplos."
+}
+
+### Delete Book
+DELETE http://localhost:8001/book/1

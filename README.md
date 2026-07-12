@@ -107,7 +107,8 @@ make db-down
 ---
 
 ## TODO
-* [ ] Criar API principal (author, genre, publisher, book, user). 
+
+* [ ] Relacionar entidades com livros.
 * [ ] Conectar em schema específico.
 * [ ] Fazer seeds
 * [ ] Criar testes de unidade.
