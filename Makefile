@@ -10,7 +10,6 @@ DB_NAME=postgres
 POSTGRES_VERSION=16.14
 
 DATABASE_URL=postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable
-MIGRATE=migrate
 
 #****************************************************#
 # Ajuda
@@ -71,6 +70,9 @@ migrate-all:
 	migrate -path ./migration -database "$(DATABASE_URL)" up
 
 migrate-down:
-	$(MIGRATE) -path ./migration -database "$(DATABASE_URL)" down 1
+	migrate -path ./migration -database "$(DATABASE_URL)" down 1
+
+migrate-seed:
+	migrate -path ./migration/seed -database "$(DATABASE_URL)" up
 
 #****************************************************#

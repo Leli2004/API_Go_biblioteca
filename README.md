@@ -108,7 +108,6 @@ make db-down
 
 ## TODO
 
-* [ ] Fazer seeds
 * [ ] Criar testes de unidade.
 
 * [ ] Emprestimos e devoluções.
