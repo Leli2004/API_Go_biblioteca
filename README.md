@@ -110,7 +110,6 @@ make db-down
 
 * [ ] Criar testes de unidade.
 
-* [ ] Emprestimos e devoluções.
 * [ ] Reservas.
 * [ ] Multas.
 
@@ -120,8 +119,6 @@ make db-down
     - restringir operações e listas por perfil
 
 * [ ] Implementar cache com Redis.
-* [ ] Implementar sistema de logs.
-* [ ] Complementar/corrigir testes de unidade.
 * [ ] Documentar.
 
 ---
