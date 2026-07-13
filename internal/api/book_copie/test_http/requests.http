@@ -1,0 +1,28 @@
+### List Book
+GET http://localhost:8001/book_copie/list?offset=0&limit=20
+
+### Get Book
+GET http://localhost:8001/book_copie/1
+
+### Create Book
+POST http://localhost:8001/book_copie
+Content-Type: application/json
+
+{
+  "book_id": 2,
+  "barcode": "xyz-001",
+  "status": "available"
+}
+
+### Update Book
+PUT http://localhost:8001/book_copie/1
+Content-Type: application/json
+
+{
+  "book_id": 2,
+  "barcode": "XYZ001",
+  "status": "available"
+}
+
+### Delete Book
+DELETE http://localhost:8001/book_copie/1

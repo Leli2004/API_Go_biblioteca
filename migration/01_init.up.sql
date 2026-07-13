@@ -88,8 +88,8 @@ CREATE TABLE book_copies (
 
 CREATE TABLE loans (
     id SERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL,
-    book_copy_id BIGINT NOT NULL,
+    user_id INT,
+    book_copy_id INT NOT NULL,
     loan_date TIMESTAMP NOT NULL DEFAULT NOW(),
     due_date TIMESTAMP NOT NULL,
     returned_at TIMESTAMP,

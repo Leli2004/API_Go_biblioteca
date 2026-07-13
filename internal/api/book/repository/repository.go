@@ -6,20 +6,23 @@ import (
 )
 
 type BookRepo struct {
-	list   ListRepo
-	get    GetRepo
-	create CreateRepo
-	update UpdateRepo
-	delete DeleteRepo
+	list    ListRepo
+	get     GetRepo
+	sublist SublistRepo
+	create  CreateRepo
+	update  UpdateRepo
+	delete  DeleteRepo
 }
 
 func NewRepository(db *sqlx.DB) *BookRepo {
+	sublist := NewSublistRepo(db)
 	return &BookRepo{
-		list:   NewListRepo(db),
-		get:    NewGetRepo(db),
-		create: NewCreateRepo(db),
-		update: NewUpdateRepo(db),
-		delete: NewDeleteRepo(db),
+		list:    NewListRepo(db),
+		sublist: sublist,
+		get:     NewGetRepo(db, sublist),
+		create:  NewCreateRepo(db),
+		update:  NewUpdateRepo(db),
+		delete:  NewDeleteRepo(db),
 	}
 }
 

@@ -6,16 +6,32 @@ import (
 )
 
 type GetRepo struct {
-	db *sqlx.DB
+	db      *sqlx.DB
+	sublist SublistRepo
 }
 
-func NewGetRepo(db *sqlx.DB) GetRepo {
-	return GetRepo{db: db}
+func NewGetRepo(db *sqlx.DB, sublist SublistRepo) GetRepo {
+	return GetRepo{db: db, sublist: sublist}
 }
 
 func (r *GetRepo) Execute(id int) (error, entity.Book) {
 	var book entity.Book
 	err := r.db.Get(&book, getSql, id)
+	if err != nil {
+		return err, entity.Book{}
+	}
+
+	err, book.Authors = r.sublist.Authors(book.Id)
+	if err != nil {
+		return err, entity.Book{}
+	}
+
+	err, book.Genres = r.sublist.Genres(book.Id)
+	if err != nil {
+		return err, entity.Book{}
+	}
+
+	err, book.Copies = r.sublist.Copies(book.Id)
 	if err != nil {
 		return err, entity.Book{}
 	}

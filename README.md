@@ -108,14 +108,18 @@ make db-down
 
 ## TODO
 
-* [ ] Relacionar entidades com livros.
-* [ ] Conectar em schema específico.
 * [ ] Fazer seeds
 * [ ] Criar testes de unidade.
 
-* [ ] Aplicar autenticação com JWT.
-* [ ] Implementar autorização por perfil.
-* [ ] Restringir operações e listas por perfil.
+* [ ] Emprestimos e devoluções.
+* [ ] Reservas.
+* [ ] Multas.
+
+* [ ] Implementar login, JWT e funcionalidades
+    - aplicar JWT
+    - autorização por perfil
+    - restringir operações e listas por perfil
+
 * [ ] Implementar cache com Redis.
 * [ ] Implementar sistema de logs.
 * [ ] Complementar/corrigir testes de unidade.
