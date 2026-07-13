@@ -73,6 +73,6 @@ migrate-down:
 	migrate -path ./migration -database "$(DATABASE_URL)" down 1
 
 migrate-seed:
-	migrate -path ./migration/seed -database "$(DATABASE_URL)" up
+	psql "$(DATABASE_URL)" -f ./migration/seed/init.sql
 
 #****************************************************#
