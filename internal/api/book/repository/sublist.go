@@ -1,46 +1,43 @@
 package repository
 
 import (
+	"context"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
 )
 
-type SublistRepo struct {
-	db *sqlx.DB
-}
+type SublistRepo struct{}
 
-func NewSublistRepo(db *sqlx.DB) SublistRepo {
-	return SublistRepo{db: db}
-}
+func NewSublistRepo() SublistRepo { return SublistRepo{} }
 
-func (r *SublistRepo) Authors(bookId int) (error, []*entity.Author) {
+func (r *SublistRepo) Authors(ctx context.Context, tx *sqlx.Tx, bookId int) (context.Context, error, []*entity.Author) {
 	var authors []*entity.Author
-	err := r.db.Select(&authors, authorsSql, bookId)
+	err := tx.SelectContext(ctx, &authors, authorsSql, bookId)
 	if err != nil {
-		return err, nil
+		return ctx, err, nil
 	}
 
-	return nil, authors
+	return ctx, nil, authors
 }
 
-func (r *SublistRepo) Genres(bookId int) (error, []*entity.Genre) {
+func (r *SublistRepo) Genres(ctx context.Context, tx *sqlx.Tx, bookId int) (context.Context, error, []*entity.Genre) {
 	var genres []*entity.Genre
-	err := r.db.Select(&genres, genresSql, bookId)
+	err := tx.SelectContext(ctx, &genres, genresSql, bookId)
 	if err != nil {
-		return err, nil
+		return ctx, err, nil
 	}
 
-	return nil, genres
+	return ctx, nil, genres
 }
 
-func (r *SublistRepo) Copies(bookId int) (error, []*entity.BookCopy) {
+func (r *SublistRepo) Copies(ctx context.Context, tx *sqlx.Tx, bookId int) (context.Context, error, []*entity.BookCopy) {
 	var copies []*entity.BookCopy
-	err := r.db.Select(&copies, copiesSql, bookId)
+	err := tx.SelectContext(ctx, &copies, copiesSql, bookId)
 	if err != nil {
-		return err, nil
+		return ctx, err, nil
 	}
 
-	return nil, copies
+	return ctx, nil, copies
 }
 
 var authorsSql = `

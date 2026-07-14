@@ -1,70 +1,43 @@
 package repository
 
 import (
+	"context"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
 )
 
-type UpdateRepo struct {
-	db *sqlx.DB
+type UpdateRepo struct{}
+
+func NewUpdateRepo() UpdateRepo {
+	return UpdateRepo{}
 }
 
-func NewUpdateRepo(db *sqlx.DB) UpdateRepo {
-	return UpdateRepo{db: db}
-}
-
-func (r *UpdateRepo) Execute(id int, input entity.Book) (error, entity.Book) {
-	tx, err := r.db.Beginx()
-	if err != nil {
-		return err, entity.Book{}
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-		}
-	}()
-
+func (r *UpdateRepo) Execute(ctx context.Context, tx *sqlx.Tx, id int, input entity.Book) (context.Context, error, entity.Book) {
 	var book entity.Book
-	err = tx.Get(&book, updateSql, input.PublisherId, input.Title, input.PublicationYear, input.Description, id)
-	if err != nil {
-		return err, entity.Book{}
+	if err := tx.GetContext(ctx, &book, updateSql, input.PublisherId, input.Title, input.PublicationYear, input.Description, id); err != nil {
+		return ctx, err, entity.Book{}
 	}
-
-	err = deleteBookAuthors(tx, id)
-	if err != nil {
-		return err, entity.Book{}
+	if err := deleteBookAuthors(ctx, tx, book.Id); err != nil {
+		return ctx, err, entity.Book{}
 	}
-
-	err = deleteBookGenres(tx, id)
-	if err != nil {
-		return err, entity.Book{}
+	if err := deleteBookGenres(ctx, tx, book.Id); err != nil {
+		return ctx, err, entity.Book{}
 	}
-
-	err = insertBookAuthors(tx, id, input.AuthorIds)
-	if err != nil {
-		return err, entity.Book{}
+	if err := insertBookAuthors(ctx, tx, book.Id, input.AuthorIds); err != nil {
+		return ctx, err, entity.Book{}
 	}
-
-	err = insertBookGenres(tx, id, input.GenreIds)
-	if err != nil {
-		return err, entity.Book{}
+	if err := insertBookGenres(ctx, tx, book.Id, input.GenreIds); err != nil {
+		return ctx, err, entity.Book{}
 	}
-
-	err = tx.Commit()
-	if err != nil {
-		return err, entity.Book{}
-	}
-
-	return nil, book
+	return ctx, nil, book
 }
 
-func deleteBookAuthors(tx *sqlx.Tx, bookId int) error {
-	_, err := tx.Exec(deleteAuthorsSql, bookId)
+func deleteBookAuthors(ctx context.Context, tx *sqlx.Tx, bookId int) error {
+	_, err := tx.ExecContext(ctx, deleteAuthorsSql, bookId)
 	return err
 }
-
-func deleteBookGenres(tx *sqlx.Tx, bookId int) error {
-	_, err := tx.Exec(deleteGenresSql, bookId)
+func deleteBookGenres(ctx context.Context, tx *sqlx.Tx, bookId int) error {
+	_, err := tx.ExecContext(ctx, deleteGenresSql, bookId)
 	return err
 }
 

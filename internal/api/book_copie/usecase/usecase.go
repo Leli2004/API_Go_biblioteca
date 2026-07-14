@@ -1,8 +1,10 @@
 package usecase
 
 import (
+	"context"
 	book_copie "github.com/Leli2004/API_Go_biblioteca/internal/api/book_copie"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
+	"github.com/jmoiron/sqlx"
 )
 
 type BookCopieUC struct {
@@ -14,33 +16,33 @@ type BookCopieUC struct {
 	repo     book_copie.Repository
 }
 
-func NewUseCase(repo book_copie.Repository) BookCopieUC {
+func NewUseCase(db *sqlx.DB, repo book_copie.Repository) BookCopieUC {
 	return BookCopieUC{
-		listUC:   NewListUC(repo),
-		getUC:    NewGetUC(repo),
-		createUC: NewCreateUC(repo),
-		updateUC: NewUpdateUC(repo),
-		deleteUC: NewDeleteUC(repo),
+		listUC:   NewListUC(db, repo),
+		getUC:    NewGetUC(db, repo),
+		createUC: NewCreateUC(db, repo),
+		updateUC: NewUpdateUC(db, repo),
+		deleteUC: NewDeleteUC(db, repo),
 		repo:     repo,
 	}
 }
 
-func (u *BookCopieUC) List(input entity.BookCopyFilters) (error, entity.BookCopyList) {
-	return u.listUC.Execute(input)
+func (u *BookCopieUC) List(ctx context.Context, input entity.BookCopyFilters) (context.Context, error, entity.BookCopyList) {
+	return u.listUC.Execute(ctx, input)
 }
 
-func (u *BookCopieUC) Get(id int) (error, entity.BookCopy) {
-	return u.getUC.Execute(id)
+func (u *BookCopieUC) Get(ctx context.Context, id int) (context.Context, error, entity.BookCopy) {
+	return u.getUC.Execute(ctx, id)
 }
 
-func (u *BookCopieUC) Create(input entity.BookCopy) (error, entity.BookCopy) {
-	return u.createUC.Execute(input)
+func (u *BookCopieUC) Create(ctx context.Context, input entity.BookCopy) (context.Context, error, entity.BookCopy) {
+	return u.createUC.Execute(ctx, input)
 }
 
-func (u *BookCopieUC) Update(id int, input entity.BookCopy) (error, entity.BookCopy) {
-	return u.updateUC.Execute(id, input)
+func (u *BookCopieUC) Update(ctx context.Context, id int, input entity.BookCopy) (context.Context, error, entity.BookCopy) {
+	return u.updateUC.Execute(ctx, id, input)
 }
 
-func (u *BookCopieUC) Delete(id int) error {
-	return u.deleteUC.Execute(id)
+func (u *BookCopieUC) Delete(ctx context.Context, id int) (context.Context, error) {
+	return u.deleteUC.Execute(ctx, id)
 }

@@ -1,8 +1,10 @@
 package usecase
 
 import (
+	"context"
 	"github.com/Leli2004/API_Go_biblioteca/internal/api/genre"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
+	"github.com/jmoiron/sqlx"
 )
 
 type GenreUC struct {
@@ -14,33 +16,33 @@ type GenreUC struct {
 	repo     genre.Repository
 }
 
-func NewUseCase(repo genre.Repository) GenreUC {
+func NewUseCase(db *sqlx.DB, repo genre.Repository) GenreUC {
 	return GenreUC{
-		listUC:   NewListUC(repo),
-		getUC:    NewGetUC(repo),
-		createUC: NewCreateUC(repo),
-		updateUC: NewUpdateUC(repo),
-		deleteUC: NewDeleteUC(repo),
+		listUC:   NewListUC(db, repo),
+		getUC:    NewGetUC(db, repo),
+		createUC: NewCreateUC(db, repo),
+		updateUC: NewUpdateUC(db, repo),
+		deleteUC: NewDeleteUC(db, repo),
 		repo:     repo,
 	}
 }
 
-func (u *GenreUC) List(input entity.GenreFilters) (error, entity.GenreList) {
-	return u.listUC.Execute(input)
+func (u *GenreUC) List(ctx context.Context, input entity.GenreFilters) (context.Context, error, entity.GenreList) {
+	return u.listUC.Execute(ctx, input)
 }
 
-func (u *GenreUC) Get(id int) (error, entity.Genre) {
-	return u.getUC.Execute(id)
+func (u *GenreUC) Get(ctx context.Context, id int) (context.Context, error, entity.Genre) {
+	return u.getUC.Execute(ctx, id)
 }
 
-func (u *GenreUC) Create(input entity.Genre) (error, entity.Genre) {
-	return u.createUC.Execute(input)
+func (u *GenreUC) Create(ctx context.Context, input entity.Genre) (context.Context, error, entity.Genre) {
+	return u.createUC.Execute(ctx, input)
 }
 
-func (u *GenreUC) Update(id int, input entity.Genre) (error, entity.Genre) {
-	return u.updateUC.Execute(id, input)
+func (u *GenreUC) Update(ctx context.Context, id int, input entity.Genre) (context.Context, error, entity.Genre) {
+	return u.updateUC.Execute(ctx, id, input)
 }
 
-func (u *GenreUC) Delete(id int) error {
-	return u.deleteUC.Execute(id)
+func (u *GenreUC) Delete(ctx context.Context, id int) (context.Context, error) {
+	return u.deleteUC.Execute(ctx, id)
 }

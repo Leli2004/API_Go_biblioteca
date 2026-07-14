@@ -1,25 +1,24 @@
 package repository
 
 import (
+	"context"
 	"github.com/jmoiron/sqlx"
 )
 
-type DeleteRepo struct {
-	db *sqlx.DB
+type DeleteRepo struct{}
+
+func NewDeleteRepo() DeleteRepo {
+	return DeleteRepo{}
 }
 
-func NewDeleteRepo(db *sqlx.DB) DeleteRepo {
-	return DeleteRepo{db: db}
-}
-
-func (r *DeleteRepo) Execute(id int) (error, int) {
+func (r *DeleteRepo) Execute(ctx context.Context, tx *sqlx.Tx, id int) (context.Context, error, int) {
 	var deletedId int
-	err := r.db.Get(&deletedId, deleteSql, id)
+	err := tx.GetContext(ctx, &deletedId, deleteSql, id)
 	if err != nil {
-		return err, 0
+		return ctx, err, 0
 	}
 
-	return nil, deletedId
+	return ctx, nil, deletedId
 }
 
 var deleteSql = `

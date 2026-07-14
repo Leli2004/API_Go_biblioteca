@@ -1,12 +1,16 @@
 package loan
 
-import "github.com/Leli2004/API_Go_biblioteca/internal/entity"
+import (
+	"context"
+	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
+	"github.com/jmoiron/sqlx"
+)
 
 type Repository interface {
-	Create(input entity.Loan) (error, entity.Loan)
-	Get(id int) (error, entity.Loan)
-	Update(id int, input entity.Loan) (error, entity.Loan)
-	GetActiveByUserAndBookCopy(userId int, bookCopyId int) (error, entity.Loan)
-	List(input entity.LoanFilters) (error, entity.LoanList)
-	Delete(id int) (error, entity.Loan)
+	Create(ctx context.Context, tx *sqlx.Tx, input entity.Loan) (context.Context, error, entity.Loan)
+	Get(ctx context.Context, tx *sqlx.Tx, id int) (context.Context, error, entity.Loan)
+	Update(ctx context.Context, tx *sqlx.Tx, id int, input entity.Loan) (context.Context, error, entity.Loan)
+	GetActiveByUserAndBookCopy(ctx context.Context, tx *sqlx.Tx, userId int, bookCopyId int) (context.Context, error, entity.Loan)
+	List(ctx context.Context, tx *sqlx.Tx, input entity.LoanFilters) (context.Context, error, entity.LoanList)
+	Delete(ctx context.Context, tx *sqlx.Tx, id int) (context.Context, error, entity.Loan)
 }

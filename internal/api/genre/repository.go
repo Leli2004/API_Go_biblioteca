@@ -1,11 +1,15 @@
 package genre
 
-import "github.com/Leli2004/API_Go_biblioteca/internal/entity"
+import (
+	"context"
+	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
+	"github.com/jmoiron/sqlx"
+)
 
 type Repository interface {
-	List(input entity.GenreFilters) (error, entity.GenreList)
-	Get(id int) (error, entity.Genre)
-	Create(input entity.Genre) (error, entity.Genre)
-	Update(id int, input entity.Genre) (error, entity.Genre)
-	Delete(id int) error
+	List(ctx context.Context, tx *sqlx.Tx, input entity.GenreFilters) (context.Context, error, entity.GenreList)
+	Get(ctx context.Context, tx *sqlx.Tx, id int) (context.Context, error, entity.Genre)
+	Create(ctx context.Context, tx *sqlx.Tx, input entity.Genre) (context.Context, error, entity.Genre)
+	Update(ctx context.Context, tx *sqlx.Tx, id int, input entity.Genre) (context.Context, error, entity.Genre)
+	Delete(ctx context.Context, tx *sqlx.Tx, id int) (context.Context, error)
 }

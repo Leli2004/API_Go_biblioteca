@@ -1,11 +1,14 @@
 package user
 
-import "github.com/Leli2004/API_Go_biblioteca/internal/entity"
+import (
+	"context"
+	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
+)
 
 type UseCase interface {
-	List(input entity.UserFilters) (error, entity.UserList)
-	Get(id int) (error, entity.User)
-	Create(input entity.User) (error, entity.User)
-	Update(id int, input entity.User) (error, entity.User)
-	Delete(id int) error
+	List(ctx context.Context, input entity.UserFilters) (context.Context, error, entity.UserList)
+	Get(ctx context.Context, id int) (context.Context, error, entity.User)
+	Create(ctx context.Context, input entity.User) (context.Context, error, entity.User)
+	Update(ctx context.Context, id int, input entity.User) (context.Context, error, entity.User)
+	Delete(ctx context.Context, id int) (context.Context, error)
 }

@@ -19,12 +19,13 @@ func NewHandler(loanUC loanu.UseCase) *Handler {
 
 func (h *Handler) Create() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		ctx := helpers.InitCtx(c)
 		var payload entity.Loan
 		if err := c.Bind(&payload); err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
 
-		err, created := h.loanUC.Create(payload)
+		ctx, err, created := h.loanUC.Create(ctx, payload)
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
@@ -34,6 +35,7 @@ func (h *Handler) Create() echo.HandlerFunc {
 
 func (h *Handler) Return() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		ctx := helpers.InitCtx(c)
 		var payload struct {
 			LoanId     int     `json:"loan_id"`
 			ReturnedAt *string `json:"returned_at"`
@@ -45,7 +47,7 @@ func (h *Handler) Return() echo.HandlerFunc {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, echo.NewHTTPError(400, "loan_id is required"))
 		}
 
-		err, updated := h.loanUC.Return(payload.LoanId, payload.ReturnedAt)
+		ctx, err, updated := h.loanUC.Return(ctx, payload.LoanId, payload.ReturnedAt)
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
@@ -55,6 +57,7 @@ func (h *Handler) Return() echo.HandlerFunc {
 
 func (h *Handler) List() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		ctx := helpers.InitCtx(c)
 		var offset int
 		offsetStr := c.QueryParam("offset")
 		offset, _ = strconv.Atoi(offsetStr)
@@ -65,7 +68,7 @@ func (h *Handler) List() echo.HandlerFunc {
 
 		input := entity.LoanFilters{Offset: offset, Limit: limit}
 
-		err, resp := h.loanUC.List(input)
+		ctx, err, resp := h.loanUC.List(ctx, input)
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
@@ -75,11 +78,12 @@ func (h *Handler) List() echo.HandlerFunc {
 
 func (h *Handler) Get() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		ctx := helpers.InitCtx(c)
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
-		err, resp := h.loanUC.Get(id)
+		ctx, err, resp := h.loanUC.Get(ctx, id)
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
@@ -89,11 +93,12 @@ func (h *Handler) Get() echo.HandlerFunc {
 
 func (h *Handler) Delete() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		ctx := helpers.InitCtx(c)
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
-		err, resp := h.loanUC.Delete(id)
+		ctx, err, resp := h.loanUC.Delete(ctx, id)
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}

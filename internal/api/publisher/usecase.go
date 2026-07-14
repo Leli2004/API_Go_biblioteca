@@ -1,11 +1,14 @@
 package publisher
 
-import "github.com/Leli2004/API_Go_biblioteca/internal/entity"
+import (
+	"context"
+	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
+)
 
 type UseCase interface {
-	List(input entity.PublisherFilters) (error, entity.PublisherList)
-	Get(id int) (error, entity.Publisher)
-	Create(input entity.Publisher) (error, entity.Publisher)
-	Update(id int, input entity.Publisher) (error, entity.Publisher)
-	Delete(id int) error
+	List(ctx context.Context, input entity.PublisherFilters) (context.Context, error, entity.PublisherList)
+	Get(ctx context.Context, id int) (context.Context, error, entity.Publisher)
+	Create(ctx context.Context, input entity.Publisher) (context.Context, error, entity.Publisher)
+	Update(ctx context.Context, id int, input entity.Publisher) (context.Context, error, entity.Publisher)
+	Delete(ctx context.Context, id int) (context.Context, error)
 }

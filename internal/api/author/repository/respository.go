@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
 )
@@ -13,33 +14,33 @@ type AuthorRepo struct {
 	delete DeleteRepo
 }
 
-func NewRepository(db *sqlx.DB) *AuthorRepo {
+func NewRepository() *AuthorRepo {
 	return &AuthorRepo{
-		list:   NewListRepo(db),
-		get:    NewGetRepo(db),
-		create: NewCreateRepo(db),
-		update: NewUpdateRepo(db),
-		delete: NewDeleteRepo(db),
+		list:   NewListRepo(),
+		get:    NewGetRepo(),
+		create: NewCreateRepo(),
+		update: NewUpdateRepo(),
+		delete: NewDeleteRepo(),
 	}
 }
 
-func (r *AuthorRepo) List(input entity.AuthorFilters) (error, entity.AuthorList) {
-	return r.list.Execute(input)
+func (r *AuthorRepo) List(ctx context.Context, tx *sqlx.Tx, input entity.AuthorFilters) (context.Context, error, entity.AuthorList) {
+	return r.list.Execute(ctx, tx, input)
 }
 
-func (r *AuthorRepo) Get(id int) (error, entity.Author) {
-	return r.get.Execute(id)
+func (r *AuthorRepo) Get(ctx context.Context, tx *sqlx.Tx, id int) (context.Context, error, entity.Author) {
+	return r.get.Execute(ctx, tx, id)
 }
 
-func (r *AuthorRepo) Create(input entity.Author) (error, entity.Author) {
-	return r.create.Execute(input)
+func (r *AuthorRepo) Create(ctx context.Context, tx *sqlx.Tx, input entity.Author) (context.Context, error, entity.Author) {
+	return r.create.Execute(ctx, tx, input)
 }
 
-func (r *AuthorRepo) Update(id int, input entity.Author) (error, entity.Author) {
-	return r.update.Execute(id, input)
+func (r *AuthorRepo) Update(ctx context.Context, tx *sqlx.Tx, id int, input entity.Author) (context.Context, error, entity.Author) {
+	return r.update.Execute(ctx, tx, id, input)
 }
 
-func (r *AuthorRepo) Delete(id int) error {
-	err, _ := r.delete.Execute(id)
-	return err
+func (r *AuthorRepo) Delete(ctx context.Context, tx *sqlx.Tx, id int) (context.Context, error) {
+	ctx, err, _ := r.delete.Execute(ctx, tx, id)
+	return ctx, err
 }

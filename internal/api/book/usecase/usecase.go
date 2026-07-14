@@ -1,8 +1,10 @@
 package usecase
 
 import (
+	"context"
 	"github.com/Leli2004/API_Go_biblioteca/internal/api/book"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
+	"github.com/jmoiron/sqlx"
 )
 
 type BookUC struct {
@@ -14,33 +16,33 @@ type BookUC struct {
 	repo     book.Repository
 }
 
-func NewUseCase(repo book.Repository) BookUC {
+func NewUseCase(db *sqlx.DB, repo book.Repository) BookUC {
 	return BookUC{
-		listUC:   NewListUC(repo),
-		getUC:    NewGetUC(repo),
-		createUC: NewCreateUC(repo),
-		updateUC: NewUpdateUC(repo),
-		deleteUC: NewDeleteUC(repo),
+		listUC:   NewListUC(db, repo),
+		getUC:    NewGetUC(db, repo),
+		createUC: NewCreateUC(db, repo),
+		updateUC: NewUpdateUC(db, repo),
+		deleteUC: NewDeleteUC(db, repo),
 		repo:     repo,
 	}
 }
 
-func (u *BookUC) List(input entity.BookFilters) (error, entity.BookList) {
-	return u.listUC.Execute(input)
+func (u *BookUC) List(ctx context.Context, input entity.BookFilters) (context.Context, error, entity.BookList) {
+	return u.listUC.Execute(ctx, input)
 }
 
-func (u *BookUC) Get(id int) (error, entity.Book) {
-	return u.getUC.Execute(id)
+func (u *BookUC) Get(ctx context.Context, id int) (context.Context, error, entity.Book) {
+	return u.getUC.Execute(ctx, id)
 }
 
-func (u *BookUC) Create(input entity.Book) (error, entity.Book) {
-	return u.createUC.Execute(input)
+func (u *BookUC) Create(ctx context.Context, input entity.Book) (context.Context, error, entity.Book) {
+	return u.createUC.Execute(ctx, input)
 }
 
-func (u *BookUC) Update(id int, input entity.Book) (error, entity.Book) {
-	return u.updateUC.Execute(id, input)
+func (u *BookUC) Update(ctx context.Context, id int, input entity.Book) (context.Context, error, entity.Book) {
+	return u.updateUC.Execute(ctx, id, input)
 }
 
-func (u *BookUC) Delete(id int) error {
-	return u.deleteUC.Execute(id)
+func (u *BookUC) Delete(ctx context.Context, id int) (context.Context, error) {
+	return u.deleteUC.Execute(ctx, id)
 }

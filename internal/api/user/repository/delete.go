@@ -1,26 +1,25 @@
 package repository
 
 import (
+	"context"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
 )
 
-type DeleteRepo struct {
-	db *sqlx.DB
+type DeleteRepo struct{}
+
+func NewDeleteRepo() DeleteRepo {
+	return DeleteRepo{}
 }
 
-func NewDeleteRepo(db *sqlx.DB) DeleteRepo {
-	return DeleteRepo{db: db}
-}
-
-func (r *DeleteRepo) Execute(id int) (error, entity.User) {
+func (r *DeleteRepo) Execute(ctx context.Context, tx *sqlx.Tx, id int) (context.Context, error, entity.User) {
 	var user entity.User
-	err := r.db.Get(&user, deleteSql, id)
+	err := tx.GetContext(ctx, &user, deleteSql, id)
 	if err != nil {
-		return err, entity.User{}
+		return ctx, err, entity.User{}
 	}
 
-	return nil, user
+	return ctx, nil, user
 }
 
 var deleteSql = `

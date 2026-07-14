@@ -1,8 +1,10 @@
 package usecase
 
 import (
+	"context"
 	"github.com/Leli2004/API_Go_biblioteca/internal/api/loan"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
+	"github.com/jmoiron/sqlx"
 )
 
 type LoanUC struct {
@@ -14,33 +16,33 @@ type LoanUC struct {
 	repo     loan.Repository
 }
 
-func NewUseCase(repo loan.Repository) LoanUC {
+func NewUseCase(db *sqlx.DB, repo loan.Repository) LoanUC {
 	return LoanUC{
-		createUC: NewCreateUC(repo),
-		returnUC: NewReturnUC(repo),
-		listUC:   NewListUC(repo),
-		getUC:    NewGetUC(repo),
-		deleteUC: NewDeleteUC(repo),
+		createUC: NewCreateUC(db, repo),
+		returnUC: NewReturnUC(db, repo),
+		listUC:   NewListUC(db, repo),
+		getUC:    NewGetUC(db, repo),
+		deleteUC: NewDeleteUC(db, repo),
 		repo:     repo,
 	}
 }
 
-func (u *LoanUC) Create(input entity.Loan) (error, entity.Loan) {
-	return u.createUC.Execute(input)
+func (u *LoanUC) Create(ctx context.Context, input entity.Loan) (context.Context, error, entity.Loan) {
+	return u.createUC.Execute(ctx, input)
 }
 
-func (u *LoanUC) Return(loanId int, returnedAt *string) (error, entity.Loan) {
-	return u.returnUC.Execute(loanId, returnedAt)
+func (u *LoanUC) Return(ctx context.Context, loanId int, returnedAt *string) (context.Context, error, entity.Loan) {
+	return u.returnUC.Execute(ctx, loanId, returnedAt)
 }
 
-func (u *LoanUC) List(input entity.LoanFilters) (error, entity.LoanList) {
-	return u.listUC.Execute(input)
+func (u *LoanUC) List(ctx context.Context, input entity.LoanFilters) (context.Context, error, entity.LoanList) {
+	return u.listUC.Execute(ctx, input)
 }
 
-func (u *LoanUC) Get(id int) (error, entity.Loan) {
-	return u.repo.Get(id)
+func (u *LoanUC) Get(ctx context.Context, id int) (context.Context, error, entity.Loan) {
+	return u.getUC.Execute(ctx, id)
 }
 
-func (u *LoanUC) Delete(id int) (error, entity.Loan) {
-	return u.repo.Delete(id)
+func (u *LoanUC) Delete(ctx context.Context, id int) (context.Context, error, entity.Loan) {
+	return u.deleteUC.Execute(ctx, id)
 }

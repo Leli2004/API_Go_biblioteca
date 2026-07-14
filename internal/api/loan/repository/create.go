@@ -1,30 +1,29 @@
 package repository
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
 )
 
-type CreateRepo struct {
-	db *sqlx.DB
+type CreateRepo struct{}
+
+func NewCreateRepo() CreateRepo {
+	return CreateRepo{}
 }
 
-func NewCreateRepo(db *sqlx.DB) CreateRepo {
-	return CreateRepo{db: db}
-}
-
-func (r *CreateRepo) Execute(input entity.Loan) (error, entity.Loan) {
+func (r *CreateRepo) Execute(ctx context.Context, tx *sqlx.Tx, input entity.Loan) (context.Context, error, entity.Loan) {
 	var created entity.Loan
-	err := r.db.Get(&created, createAndUpdateSql, input.UserId, input.BookCopyId, input.LoanDate, input.DueDate, input.Status)
+	err := tx.GetContext(ctx, &created, createAndUpdateSql, input.UserId, input.BookCopyId, input.LoanDate, input.DueDate, input.Status)
 	if err != nil {
 		if err.Error() == "sql: no rows in result set" {
-			return fmt.Errorf("book_copy is not available"), entity.Loan{}
+			return ctx, fmt.Errorf("book_copy is not available"), entity.Loan{}
 		}
-		return err, entity.Loan{}
+		return ctx, err, entity.Loan{}
 	}
-	return nil, created
+	return ctx, nil, created
 }
 
 var createAndUpdateSql = `

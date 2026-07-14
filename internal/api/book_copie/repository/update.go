@@ -1,34 +1,33 @@
 package repository
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
 )
 
-type UpdateRepo struct {
-	db *sqlx.DB
+type UpdateRepo struct{}
+
+func NewUpdateRepo() UpdateRepo {
+	return UpdateRepo{}
 }
 
-func NewUpdateRepo(db *sqlx.DB) UpdateRepo {
-	return UpdateRepo{db: db}
-}
-
-func (r *UpdateRepo) Execute(id int, input entity.BookCopy) (error, entity.BookCopy) {
+func (r *UpdateRepo) Execute(ctx context.Context, tx *sqlx.Tx, id int, input entity.BookCopy) (context.Context, error, entity.BookCopy) {
 	var existingId int
-	err := r.db.Get(&existingId, checkBarcodeSql, input.Barcode)
+	err := tx.GetContext(ctx, &existingId, checkBarcodeSql, input.Barcode)
 	if err == nil && existingId != id {
-		return fmt.Errorf("barcode '%s' já existe, não é possível duplicar", input.Barcode), entity.BookCopy{}
+		return ctx, fmt.Errorf("barcode '%s' já existe, não é possível duplicar", input.Barcode), entity.BookCopy{}
 	}
 
 	var copy entity.BookCopy
-	err = r.db.Get(&copy, updateSql, input.BookId, input.Barcode, input.Status, id)
+	err = tx.GetContext(ctx, &copy, updateSql, input.BookId, input.Barcode, input.Status, id)
 	if err != nil {
-		return err, entity.BookCopy{}
+		return ctx, err, entity.BookCopy{}
 	}
 
-	return nil, copy
+	return ctx, nil, copy
 }
 
 var updateSql = `

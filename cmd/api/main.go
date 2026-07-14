@@ -50,44 +50,44 @@ func main() {
 	e := echo.New()
 
 	// Author
-	authorRepo := authorRepository.NewRepository(dbSqlx)
-	authorUC := authorUseCase.NewUseCase(authorRepo)
+	authorRepo := authorRepository.NewRepository()
+	authorUC := authorUseCase.NewUseCase(dbSqlx, authorRepo)
 	authorhandler := authorHttp.NewHandler(authorUC)
 	authorHttp.MapRoutes(e, authorhandler)
 
 	// Genre
-	genreRepo := genreRepository.NewRepository(dbSqlx)
-	genreUC := genreUseCase.NewUseCase(genreRepo)
+	genreRepo := genreRepository.NewRepository()
+	genreUC := genreUseCase.NewUseCase(dbSqlx, genreRepo)
 	genreHandler := genreHttp.NewHandler(genreUC)
 	genreHttp.MapRoutes(e, genreHandler)
 
 	// Publisher
-	publisherRepo := publisherRepository.NewRepository(dbSqlx)
-	publisherUC := publisherUseCase.NewUseCase(publisherRepo)
+	publisherRepo := publisherRepository.NewRepository()
+	publisherUC := publisherUseCase.NewUseCase(dbSqlx, publisherRepo)
 	publisherHandler := publisherHttp.NewHandler(publisherUC)
 	publisherHttp.MapRoutes(e, publisherHandler)
 
 	// Book
-	bookRepo := bookRepository.NewRepository(dbSqlx)
-	bookUC := bookUseCase.NewUseCase(bookRepo)
+	bookRepo := bookRepository.NewRepository()
+	bookUC := bookUseCase.NewUseCase(dbSqlx, bookRepo)
 	bookHandler := bookHttp.NewHandler(bookUC)
 	bookHttp.MapRoutes(e, bookHandler)
 
 	// Book Copie
-	bookCopieRepo := bookCopieRepository.NewRepository(dbSqlx)
-	bookCopieUC := bookCopieUseCase.NewUseCase(bookCopieRepo)
+	bookCopieRepo := bookCopieRepository.NewRepository()
+	bookCopieUC := bookCopieUseCase.NewUseCase(dbSqlx, bookCopieRepo)
 	bookCopieHandler := bookCopieHttp.NewHandler(bookCopieUC)
 	bookCopieHttp.MapRoutes(e, bookCopieHandler)
 
 	// User
-	userRepo := userRepository.NewRepository(dbSqlx)
-	userUC := userUseCase.NewUseCase(userRepo)
+	userRepo := userRepository.NewRepository()
+	userUC := userUseCase.NewUseCase(dbSqlx, userRepo)
 	userHandler := userHttp.NewHandler(userUC)
 	userHttp.MapRoutes(e, userHandler)
 
 	// Loan
-	loanRepo := loanRepository.NewRepository(dbSqlx)
-	loanUC := loanUseCase.NewUseCase(loanRepo)
+	loanRepo := loanRepository.NewRepository()
+	loanUC := loanUseCase.NewUseCase(dbSqlx, loanRepo)
 	loanHandler := loanHttp.NewHandler(&loanUC)
 	loanHttp.MapRoutes(e, loanHandler)
 

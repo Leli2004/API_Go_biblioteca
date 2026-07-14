@@ -1,28 +1,25 @@
 package repository
 
 import (
+	"context"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
 )
 
-type UpdateRepo struct {
-	db *sqlx.DB
+type UpdateRepo struct{}
+
+func NewUpdateRepo() UpdateRepo {
+	return UpdateRepo{}
 }
 
-func NewUpdateRepo(db *sqlx.DB) UpdateRepo {
-	return UpdateRepo{
-		db: db,
-	}
-}
-
-func (r *UpdateRepo) Execute(id int, input entity.Author) (error, entity.Author) {
+func (r *UpdateRepo) Execute(ctx context.Context, tx *sqlx.Tx, id int, input entity.Author) (context.Context, error, entity.Author) {
 	var author entity.Author
-	err := r.db.Get(&author, updateSql, input.Name, id)
+	err := tx.GetContext(ctx, &author, updateSql, input.Name, id)
 	if err != nil {
-		return err, entity.Author{}
+		return ctx, err, entity.Author{}
 	}
 
-	return nil, author
+	return ctx, nil, author
 }
 
 var updateSql = `

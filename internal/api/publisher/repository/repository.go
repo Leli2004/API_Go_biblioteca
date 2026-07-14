@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
 )
@@ -13,33 +14,33 @@ type PublisherRepo struct {
 	delete DeleteRepo
 }
 
-func NewRepository(db *sqlx.DB) *PublisherRepo {
+func NewRepository() *PublisherRepo {
 	return &PublisherRepo{
-		list:   NewListRepo(db),
-		get:    NewGetRepo(db),
-		create: NewCreateRepo(db),
-		update: NewUpdateRepo(db),
-		delete: NewDeleteRepo(db),
+		list:   NewListRepo(),
+		get:    NewGetRepo(),
+		create: NewCreateRepo(),
+		update: NewUpdateRepo(),
+		delete: NewDeleteRepo(),
 	}
 }
 
-func (r *PublisherRepo) List(input entity.PublisherFilters) (error, entity.PublisherList) {
-	return r.list.Execute(input)
+func (r *PublisherRepo) List(ctx context.Context, tx *sqlx.Tx, input entity.PublisherFilters) (context.Context, error, entity.PublisherList) {
+	return r.list.Execute(ctx, tx, input)
 }
 
-func (r *PublisherRepo) Get(id int) (error, entity.Publisher) {
-	return r.get.Execute(id)
+func (r *PublisherRepo) Get(ctx context.Context, tx *sqlx.Tx, id int) (context.Context, error, entity.Publisher) {
+	return r.get.Execute(ctx, tx, id)
 }
 
-func (r *PublisherRepo) Create(input entity.Publisher) (error, entity.Publisher) {
-	return r.create.Execute(input)
+func (r *PublisherRepo) Create(ctx context.Context, tx *sqlx.Tx, input entity.Publisher) (context.Context, error, entity.Publisher) {
+	return r.create.Execute(ctx, tx, input)
 }
 
-func (r *PublisherRepo) Update(id int, input entity.Publisher) (error, entity.Publisher) {
-	return r.update.Execute(id, input)
+func (r *PublisherRepo) Update(ctx context.Context, tx *sqlx.Tx, id int, input entity.Publisher) (context.Context, error, entity.Publisher) {
+	return r.update.Execute(ctx, tx, id, input)
 }
 
-func (r *PublisherRepo) Delete(id int) error {
-	err, _ := r.delete.Execute(id)
-	return err
+func (r *PublisherRepo) Delete(ctx context.Context, tx *sqlx.Tx, id int) (context.Context, error) {
+	ctx, err, _ := r.delete.Execute(ctx, tx, id)
+	return ctx, err
 }

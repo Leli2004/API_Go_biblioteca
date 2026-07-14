@@ -1,27 +1,26 @@
 package repository
 
 import (
+	"context"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/Leli2004/API_Go_biblioteca/internal/helpers"
 	"github.com/jmoiron/sqlx"
 )
 
-type ListRepo struct {
-	db *sqlx.DB
+type ListRepo struct{}
+
+func NewListRepo() ListRepo {
+	return ListRepo{}
 }
 
-func NewListRepo(db *sqlx.DB) ListRepo {
-	return ListRepo{db: db}
-}
-
-func (r *ListRepo) Execute(input entity.BookCopyFilters) (error, entity.BookCopyList) {
+func (r *ListRepo) Execute(ctx context.Context, tx *sqlx.Tx, input entity.BookCopyFilters) (context.Context, error, entity.BookCopyList) {
 	var copies []*entity.BookCopy
-	err := r.db.Select(&copies, listSql, input.Offset, input.Limit)
+	err := tx.SelectContext(ctx, &copies, listSql, input.Offset, input.Limit)
 	if err != nil {
-		return err, entity.BookCopyList{}
+		return ctx, err, entity.BookCopyList{}
 	}
 
-	return nil, entity.BookCopyList{
+	return ctx, nil, entity.BookCopyList{
 		Offset: input.Offset,
 		Limit:  helpers.GetMin(input.Limit, len(copies)),
 		Data:   copies,

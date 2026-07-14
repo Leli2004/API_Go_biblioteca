@@ -1,26 +1,25 @@
 package repository
 
 import (
+	"context"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
 )
 
-type GetRepo struct {
-	db *sqlx.DB
+type GetRepo struct{}
+
+func NewGetRepo() GetRepo {
+	return GetRepo{}
 }
 
-func NewGetRepo(db *sqlx.DB) GetRepo {
-	return GetRepo{db: db}
-}
-
-func (r *GetRepo) Execute(id int) (error, entity.BookCopy) {
+func (r *GetRepo) Execute(ctx context.Context, tx *sqlx.Tx, id int) (context.Context, error, entity.BookCopy) {
 	var copy entity.BookCopy
-	err := r.db.Get(&copy, getSql, id)
+	err := tx.GetContext(ctx, &copy, getSql, id)
 	if err != nil {
-		return err, entity.BookCopy{}
+		return ctx, err, entity.BookCopy{}
 	}
 
-	return nil, copy
+	return ctx, nil, copy
 }
 
 var getSql = `

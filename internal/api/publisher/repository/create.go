@@ -1,26 +1,25 @@
 package repository
 
 import (
+	"context"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
 )
 
-type CreateRepo struct {
-	db *sqlx.DB
+type CreateRepo struct{}
+
+func NewCreateRepo() CreateRepo {
+	return CreateRepo{}
 }
 
-func NewCreateRepo(db *sqlx.DB) CreateRepo {
-	return CreateRepo{db: db}
-}
-
-func (r *CreateRepo) Execute(input entity.Publisher) (error, entity.Publisher) {
+func (r *CreateRepo) Execute(ctx context.Context, tx *sqlx.Tx, input entity.Publisher) (context.Context, error, entity.Publisher) {
 	var publisher entity.Publisher
-	err := r.db.Get(&publisher, createSql, input.Name, input.Website)
+	err := tx.GetContext(ctx, &publisher, createSql, input.Name, input.Website)
 	if err != nil {
-		return err, entity.Publisher{}
+		return ctx, err, entity.Publisher{}
 	}
 
-	return nil, publisher
+	return ctx, nil, publisher
 }
 
 var createSql = `

@@ -1,11 +1,14 @@
 package author
 
-import "github.com/Leli2004/API_Go_biblioteca/internal/entity"
+import (
+	"context"
+	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
+)
 
 type UseCase interface {
-	List(input entity.AuthorFilters) (error, entity.AuthorList)
-	Get(id int) (error, entity.Author)
-	Create(input entity.Author) (error, entity.Author)
-	Update(id int, input entity.Author) (error, entity.Author)
-	Delete(id int) error
+	List(ctx context.Context, input entity.AuthorFilters) (context.Context, error, entity.AuthorList)
+	Get(ctx context.Context, id int) (context.Context, error, entity.Author)
+	Create(ctx context.Context, input entity.Author) (context.Context, error, entity.Author)
+	Update(ctx context.Context, id int, input entity.Author) (context.Context, error, entity.Author)
+	Delete(ctx context.Context, id int) (context.Context, error)
 }

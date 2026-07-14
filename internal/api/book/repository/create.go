@@ -1,74 +1,48 @@
 package repository
 
 import (
+	"context"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
 )
 
-type CreateRepo struct {
-	db *sqlx.DB
+type CreateRepo struct{}
+
+func NewCreateRepo() CreateRepo {
+	return CreateRepo{}
 }
 
-func NewCreateRepo(db *sqlx.DB) CreateRepo {
-	return CreateRepo{db: db}
-}
-
-func (r *CreateRepo) Execute(input entity.Book) (error, entity.Book) {
-	tx, err := r.db.Beginx()
-	if err != nil {
-		return err, entity.Book{}
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-		}
-	}()
-
+func (r *CreateRepo) Execute(ctx context.Context, tx *sqlx.Tx, input entity.Book) (context.Context, error, entity.Book) {
 	var book entity.Book
-	err = tx.Get(&book, createSql, input.PublisherId, input.Title, input.PublicationYear, input.Description)
-	if err != nil {
-		return err, entity.Book{}
+	if err := tx.GetContext(ctx, &book, createSql, input.PublisherId, input.Title, input.PublicationYear, input.Description); err != nil {
+		return ctx, err, entity.Book{}
 	}
-
-	err = insertBookAuthors(tx, book.Id, input.AuthorIds)
-	if err != nil {
-		return err, entity.Book{}
+	if err := insertBookAuthors(ctx, tx, book.Id, input.AuthorIds); err != nil {
+		return ctx, err, entity.Book{}
 	}
-
-	err = insertBookGenres(tx, book.Id, input.GenreIds)
-	if err != nil {
-		return err, entity.Book{}
+	if err := insertBookGenres(ctx, tx, book.Id, input.GenreIds); err != nil {
+		return ctx, err, entity.Book{}
 	}
-
-	err = tx.Commit()
-	if err != nil {
-		return err, entity.Book{}
-	}
-
-	return nil, book
+	return ctx, nil, book
 }
 
-func insertBookAuthors(tx *sqlx.Tx, bookId int, authorIds []int) error {
+func insertBookAuthors(ctx context.Context, tx *sqlx.Tx, bookId int, authorIds []int) error {
 	for _, authorId := range authorIds {
-		if authorId <= 0 {
-			continue
-		}
-		_, err := tx.Exec(insertAuthorSql, bookId, authorId)
-		if err != nil {
-			return err
+		if authorId > 0 {
+			if _, err := tx.ExecContext(ctx, insertAuthorSql, bookId, authorId); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
 }
 
-func insertBookGenres(tx *sqlx.Tx, bookId int, genreIds []int) error {
+func insertBookGenres(ctx context.Context, tx *sqlx.Tx, bookId int, genreIds []int) error {
 	for _, genreId := range genreIds {
-		if genreId <= 0 {
-			continue
-		}
-		_, err := tx.Exec(insertGenreSql, bookId, genreId)
-		if err != nil {
-			return err
+		if genreId > 0 {
+			if _, err := tx.ExecContext(ctx, insertGenreSql, bookId, genreId); err != nil {
+				return err
+			}
 		}
 	}
 	return nil

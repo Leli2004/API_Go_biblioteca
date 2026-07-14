@@ -1,22 +1,32 @@
 package usecase
 
 import (
+	"context"
 	"github.com/Leli2004/API_Go_biblioteca/internal/api/publisher"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
+	"github.com/Leli2004/API_Go_biblioteca/internal/helpers"
+	"github.com/jmoiron/sqlx"
 )
 
 type UpdateUC struct {
+	db   *sqlx.DB
 	repo publisher.Repository
 }
 
-func NewUpdateUC(repo publisher.Repository) UpdateUC {
-	return UpdateUC{repo: repo}
+func NewUpdateUC(db *sqlx.DB, repo publisher.Repository) UpdateUC {
+	return UpdateUC{db: db, repo: repo}
 }
 
-func (u *UpdateUC) Execute(id int, input entity.Publisher) (error, entity.Publisher) {
-	err := input.Validate()
+func (u *UpdateUC) Execute(ctx context.Context, id int, input entity.Publisher) (returnedCtx context.Context, err error, result entity.Publisher) {
+	tx, err := helpers.OpenTransaction(ctx, u.db)
 	if err != nil {
-		return err, entity.Publisher{}
+		return ctx, err, result
 	}
-	return u.repo.Update(id, input)
+	defer helpers.CloseTransaction(tx, &err)
+
+	err = input.Validate()
+	if err != nil {
+		return ctx, err, entity.Publisher{}
+	}
+	return u.repo.Update(ctx, tx, id, input)
 }

@@ -1,22 +1,32 @@
 package usecase
 
 import (
+	"context"
 	"github.com/Leli2004/API_Go_biblioteca/internal/api/book"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
+	"github.com/Leli2004/API_Go_biblioteca/internal/helpers"
+	"github.com/jmoiron/sqlx"
 )
 
 type CreateUC struct {
+	db   *sqlx.DB
 	repo book.Repository
 }
 
-func NewCreateUC(repo book.Repository) CreateUC {
-	return CreateUC{repo: repo}
+func NewCreateUC(db *sqlx.DB, repo book.Repository) CreateUC {
+	return CreateUC{db: db, repo: repo}
 }
 
-func (u *CreateUC) Execute(input entity.Book) (error, entity.Book) {
-	err := input.Validate()
+func (u *CreateUC) Execute(ctx context.Context, input entity.Book) (returnedCtx context.Context, err error, result entity.Book) {
+	tx, err := helpers.OpenTransaction(ctx, u.db)
 	if err != nil {
-		return err, entity.Book{}
+		return ctx, err, result
 	}
-	return u.repo.Create(input)
+	defer helpers.CloseTransaction(tx, &err)
+
+	err = input.Validate()
+	if err != nil {
+		return ctx, err, entity.Book{}
+	}
+	return u.repo.Create(ctx, tx, input)
 }

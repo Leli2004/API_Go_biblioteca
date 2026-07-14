@@ -21,6 +21,7 @@ func NewHandler(authorUC usecase.AuthorUC) *Handler {
 
 func (h *Handler) List() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		ctx := helpers.InitCtx(c)
 		var offset int
 		offsetStr := c.QueryParam("offset")
 		offset, _ = strconv.Atoi(offsetStr)
@@ -34,7 +35,7 @@ func (h *Handler) List() echo.HandlerFunc {
 			Limit:  limit,
 		}
 
-		err, resp := h.authorUC.List(input)
+		ctx, err, resp := h.authorUC.List(ctx, input)
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
@@ -45,12 +46,13 @@ func (h *Handler) List() echo.HandlerFunc {
 
 func (h *Handler) Get() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		ctx := helpers.InitCtx(c)
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
 
-		err, resp := h.authorUC.Get(id)
+		ctx, err, resp := h.authorUC.Get(ctx, id)
 		if err != nil {
 			if strings.Contains(err.Error(), "no rows in result") {
 				return c.JSON(http.StatusNotFound, map[string]string{"error": "author not found"})
@@ -64,12 +66,13 @@ func (h *Handler) Get() echo.HandlerFunc {
 
 func (h *Handler) Create() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		ctx := helpers.InitCtx(c)
 		var input entity.Author
 		if err := c.Bind(&input); err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
 
-		err, resp := h.authorUC.Create(input)
+		ctx, err, resp := h.authorUC.Create(ctx, input)
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
@@ -80,6 +83,7 @@ func (h *Handler) Create() echo.HandlerFunc {
 
 func (h *Handler) Update() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		ctx := helpers.InitCtx(c)
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
@@ -90,7 +94,7 @@ func (h *Handler) Update() echo.HandlerFunc {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
 
-		err, resp := h.authorUC.Update(id, input)
+		ctx, err, resp := h.authorUC.Update(ctx, id, input)
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
@@ -101,12 +105,15 @@ func (h *Handler) Update() echo.HandlerFunc {
 
 func (h *Handler) Delete() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		ctx := helpers.InitCtx(c)
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
 
-		if err := h.authorUC.Delete(id); err != nil {
+		ctx, err = h.authorUC.Delete(ctx, id)
+
+		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
 
