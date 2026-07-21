@@ -6,6 +6,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+//go:generate mockery --name=Repository --dir=. --output=mocks --filename=mock_repository.go --with-expecter=True
+
 type Repository interface {
 	List(ctx context.Context, tx *sqlx.Tx, input entity.AuthorFilters) (context.Context, error, entity.AuthorList)
 	Get(ctx context.Context, tx *sqlx.Tx, id int) (context.Context, error, entity.Author)

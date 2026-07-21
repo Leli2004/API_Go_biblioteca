@@ -3,9 +3,18 @@ module github.com/Leli2004/API_Go_biblioteca
 go 1.26
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/lib/pq v1.12.3
 	github.com/spf13/viper v1.21.0
+	github.com/stretchr/testify v1.11.1
+)
+
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/stretchr/objx v0.5.2 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 require (

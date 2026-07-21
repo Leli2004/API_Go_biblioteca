@@ -119,6 +119,7 @@ make db-down
     - restringir operações e listas por perfil
 
 * [ ] Implementar cache com Redis.
-* [ ] Documentar.
+
+* [ ] Front-end (somente para facilitar uso das requests).
 
 ---

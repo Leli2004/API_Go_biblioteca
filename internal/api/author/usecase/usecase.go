@@ -16,8 +16,8 @@ type AuthorUC struct {
 	repo     author.Repository
 }
 
-func NewUseCase(db *sqlx.DB, repo author.Repository) AuthorUC {
-	return AuthorUC{
+func NewUseCase(db *sqlx.DB, repo author.Repository) *AuthorUC {
+	return &AuthorUC{
 		listUC:   NewListUC(db, repo),
 		getUC:    NewGetUC(db, repo),
 		createUC: NewCreateUC(db, repo),
