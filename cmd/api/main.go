@@ -1,7 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/Leli2004/API_Go_biblioteca/config"
 	"github.com/Leli2004/API_Go_biblioteca/db"
@@ -34,6 +38,14 @@ import (
 	loanHttp "github.com/Leli2004/API_Go_biblioteca/internal/api/loan/delivery/http"
 	loanRepository "github.com/Leli2004/API_Go_biblioteca/internal/api/loan/repository"
 	loanUseCase "github.com/Leli2004/API_Go_biblioteca/internal/api/loan/usecase"
+
+	reservationHttp "github.com/Leli2004/API_Go_biblioteca/internal/api/reservation/delivery/http"
+	reservationRepository "github.com/Leli2004/API_Go_biblioteca/internal/api/reservation/repository"
+	reservationUseCase "github.com/Leli2004/API_Go_biblioteca/internal/api/reservation/usecase"
+
+	fineRepository "github.com/Leli2004/API_Go_biblioteca/internal/api/fine/repository"
+	fineUseCase "github.com/Leli2004/API_Go_biblioteca/internal/api/fine/usecase"
+	"github.com/Leli2004/API_Go_biblioteca/internal/worker"
 )
 
 func main() {
@@ -91,5 +103,38 @@ func main() {
 	loanHandler := loanHttp.NewHandler(loanUC)
 	loanHttp.MapRoutes(e, loanHandler)
 
-	e.Start(fmt.Sprintf(":%s", config.GetServerPort()))
+	// Reservation
+	reservationRepo := reservationRepository.NewRepository()
+	reservationUC := reservationUseCase.NewUseCase(dbSqlx, reservationRepo)
+	reservationHandler := reservationHttp.NewHandler(reservationUC)
+	reservationHttp.MapRoutes(e, reservationHandler)
+
+	// Fine checker worker
+	fineRepo := fineRepository.NewRepository()
+	fineUC := fineUseCase.NewUseCase(dbSqlx, fineRepo)
+	fineChecker := worker.NewFineChecker(fineUC)
+	
+	workerCtx, cancelWorker := context.WithCancel(context.Background())
+	defer cancelWorker()
+	go fineChecker.Run(workerCtx)
+
+	serverErr := make(chan error, 1)
+	go func() {
+		serverErr <- e.Start(fmt.Sprintf(":%s", config.GetServerPort()))
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	select {
+	case <-quit:
+	case err := <-serverErr:
+		if err != nil {
+			e.Logger.Error(err)
+		}
+	}
+
+	cancelWorker()
+	if err := e.Shutdown(context.Background()); err != nil {
+		e.Logger.Error(err)
+	}
 }

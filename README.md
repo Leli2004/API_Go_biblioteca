@@ -108,11 +108,6 @@ make db-down
 
 ## TODO
 
-* [ ] Criar testes de unidade.
-
-* [ ] Reservas.
-* [ ] Multas.
-
 * [ ] Implementar login, JWT e funcionalidades
     - aplicar JWT
     - autorização por perfil

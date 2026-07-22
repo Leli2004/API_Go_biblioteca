@@ -53,18 +53,6 @@ db-create:
 	docker exec -it $(DB_CONTAINER) createdb -U $(DB_USER) $(DB_NAME)
 
 #****************************************************#
-# Build
-
-run:
-	go run ./cmd/api
-
-build:
-	go build -o dist/$(APP_NAME) ./cmd/api
-
-clean:
-	rm -rf dist/*
-
-#****************************************************#
 # Migrate
 
 migrate-all:
@@ -75,6 +63,18 @@ migrate-down:
 
 migrate-seed:
 	psql "$(DATABASE_URL)" -f ./migration/seed/init.sql
+
+#****************************************************#
+# Build
+
+run:
+	go run ./cmd/api
+
+build:
+	go build -o dist/$(APP_NAME) ./cmd/api
+
+clean:
+	rm -rf dist/*
 
 #****************************************************#
 # Tests

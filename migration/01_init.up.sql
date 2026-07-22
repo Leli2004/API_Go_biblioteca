@@ -172,3 +172,5 @@ CREATE INDEX idx_reservations_created_at ON reservations(created_at);
 CREATE INDEX idx_fines_user_id ON fines(user_id);
 CREATE INDEX idx_fines_loan_id ON fines(loan_id);
 CREATE INDEX idx_fines_paid ON fines(paid);
+
+CREATE UNIQUE INDEX IF NOT EXISTS uq_fines_loan_id ON biblioteca.fines (loan_id);
