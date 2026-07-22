@@ -151,6 +151,74 @@ func (_c *Repository_Delete_Call) RunAndReturn(run func(context.Context, *sqlx.T
 	return _c
 }
 
+// EmailExists provides a mock function with given fields: ctx, tx, email, excludeUserID
+func (_m *Repository) EmailExists(ctx context.Context, tx *sqlx.Tx, email string, excludeUserID int) (context.Context, error, bool) {
+	ret := _m.Called(ctx, tx, email, excludeUserID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for EmailExists")
+	}
+
+	var r0 context.Context
+	var r1 error
+	var r2 bool
+	if rf, ok := ret.Get(0).(func(context.Context, *sqlx.Tx, string, int) (context.Context, error, bool)); ok {
+		return rf(ctx, tx, email, excludeUserID)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *sqlx.Tx, string, int) context.Context); ok {
+		r0 = rf(ctx, tx, email, excludeUserID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(context.Context)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *sqlx.Tx, string, int) error); ok {
+		r1 = rf(ctx, tx, email, excludeUserID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	if rf, ok := ret.Get(2).(func(context.Context, *sqlx.Tx, string, int) bool); ok {
+		r2 = rf(ctx, tx, email, excludeUserID)
+	} else {
+		r2 = ret.Get(2).(bool)
+	}
+
+	return r0, r1, r2
+}
+
+// Repository_EmailExists_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'EmailExists'
+type Repository_EmailExists_Call struct {
+	*mock.Call
+}
+
+// EmailExists is a helper method to define mock.On call
+//   - ctx context.Context
+//   - tx *sqlx.Tx
+//   - email string
+//   - excludeUserID int
+func (_e *Repository_Expecter) EmailExists(ctx interface{}, tx interface{}, email interface{}, excludeUserID interface{}) *Repository_EmailExists_Call {
+	return &Repository_EmailExists_Call{Call: _e.mock.On("EmailExists", ctx, tx, email, excludeUserID)}
+}
+
+func (_c *Repository_EmailExists_Call) Run(run func(ctx context.Context, tx *sqlx.Tx, email string, excludeUserID int)) *Repository_EmailExists_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(*sqlx.Tx), args[2].(string), args[3].(int))
+	})
+	return _c
+}
+
+func (_c *Repository_EmailExists_Call) Return(_a0 context.Context, _a1 error, _a2 bool) *Repository_EmailExists_Call {
+	_c.Call.Return(_a0, _a1, _a2)
+	return _c
+}
+
+func (_c *Repository_EmailExists_Call) RunAndReturn(run func(context.Context, *sqlx.Tx, string, int) (context.Context, error, bool)) *Repository_EmailExists_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Get provides a mock function with given fields: ctx, tx, id
 func (_m *Repository) Get(ctx context.Context, tx *sqlx.Tx, id int) (context.Context, error, entity.User) {
 	ret := _m.Called(ctx, tx, id)
@@ -416,6 +484,74 @@ func (_c *Repository_Update_Call) Return(_a0 context.Context, _a1 error, _a2 ent
 }
 
 func (_c *Repository_Update_Call) RunAndReturn(run func(context.Context, *sqlx.Tx, int, entity.User) (context.Context, error, entity.User)) *Repository_Update_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UsernameExists provides a mock function with given fields: ctx, tx, username, excludeUserID
+func (_m *Repository) UsernameExists(ctx context.Context, tx *sqlx.Tx, username string, excludeUserID int) (context.Context, error, bool) {
+	ret := _m.Called(ctx, tx, username, excludeUserID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UsernameExists")
+	}
+
+	var r0 context.Context
+	var r1 error
+	var r2 bool
+	if rf, ok := ret.Get(0).(func(context.Context, *sqlx.Tx, string, int) (context.Context, error, bool)); ok {
+		return rf(ctx, tx, username, excludeUserID)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *sqlx.Tx, string, int) context.Context); ok {
+		r0 = rf(ctx, tx, username, excludeUserID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(context.Context)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *sqlx.Tx, string, int) error); ok {
+		r1 = rf(ctx, tx, username, excludeUserID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	if rf, ok := ret.Get(2).(func(context.Context, *sqlx.Tx, string, int) bool); ok {
+		r2 = rf(ctx, tx, username, excludeUserID)
+	} else {
+		r2 = ret.Get(2).(bool)
+	}
+
+	return r0, r1, r2
+}
+
+// Repository_UsernameExists_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UsernameExists'
+type Repository_UsernameExists_Call struct {
+	*mock.Call
+}
+
+// UsernameExists is a helper method to define mock.On call
+//   - ctx context.Context
+//   - tx *sqlx.Tx
+//   - username string
+//   - excludeUserID int
+func (_e *Repository_Expecter) UsernameExists(ctx interface{}, tx interface{}, username interface{}, excludeUserID interface{}) *Repository_UsernameExists_Call {
+	return &Repository_UsernameExists_Call{Call: _e.mock.On("UsernameExists", ctx, tx, username, excludeUserID)}
+}
+
+func (_c *Repository_UsernameExists_Call) Run(run func(ctx context.Context, tx *sqlx.Tx, username string, excludeUserID int)) *Repository_UsernameExists_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(*sqlx.Tx), args[2].(string), args[3].(int))
+	})
+	return _c
+}
+
+func (_c *Repository_UsernameExists_Call) Return(_a0 context.Context, _a1 error, _a2 bool) *Repository_UsernameExists_Call {
+	_c.Call.Return(_a0, _a1, _a2)
+	return _c
+}
+
+func (_c *Repository_UsernameExists_Call) RunAndReturn(run func(context.Context, *sqlx.Tx, string, int) (context.Context, error, bool)) *Repository_UsernameExists_Call {
 	_c.Call.Return(run)
 	return _c
 }

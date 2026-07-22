@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Leli2004/API_Go_biblioteca/internal/api/user"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
@@ -43,5 +44,34 @@ func (u *CreateUC) Execute(ctx context.Context, input entity.User) (returnedCtx 
 		return ctx, err, entity.User{}
 	}
 
+	ctx, err = u.checkDuplicated(ctx, tx, input)
+	if err != nil {
+		return ctx, err, entity.User{}
+	}
+
 	return u.repo.Create(ctx, tx, input)
+}
+
+func (u *CreateUC) checkDuplicated(ctx context.Context, tx *sqlx.Tx, input entity.User) (returnedCtx context.Context, err error) {
+	var isDuplicated bool
+
+	returnedCtx, err, isDuplicated = u.repo.UsernameExists(ctx, tx, input.Username, 0)
+	if err != nil {
+		return returnedCtx, fmt.Errorf("UserUC.Create.UsernameExists: %w", err)
+	}
+
+	if isDuplicated {
+		return returnedCtx, fmt.Errorf("username already exists")
+	}
+
+	returnedCtx, err, isDuplicated = u.repo.EmailExists(ctx, tx, input.Email, 0)
+	if err != nil {
+		return returnedCtx, fmt.Errorf("UserUC.Create.EmailExists: %w", err)
+	}
+
+	if isDuplicated {
+		return returnedCtx, fmt.Errorf("email already exists")
+	}
+
+	return
 }
