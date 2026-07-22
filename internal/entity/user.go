@@ -34,7 +34,7 @@ func (u *User) SetDefault() {
 	}
 }
 
-func (u *User) Validate() error {
+func (u *User) Validate(isCreate bool) error {
 	if u.Name == "" {
 		return fmt.Errorf("Invalid field: Name is required")
 	}
@@ -47,8 +47,10 @@ func (u *User) Validate() error {
 	if u.Email == "" {
 		return fmt.Errorf("Invalid field: Email is required")
 	}
-	if u.Password == "" {
-		return fmt.Errorf("Invalid field: Password is required")
+	if isCreate {
+		if u.Password == "" {
+			return fmt.Errorf("Invalid field: Password is required")
+		}
 	}
 	if u.Role != RoleAdmin && u.Role != RoleUser {
 		return fmt.Errorf("invalid field: role must be admin or user")

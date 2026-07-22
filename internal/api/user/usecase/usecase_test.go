@@ -79,8 +79,12 @@ func Test_Create_UseCase_Validation(t *testing.T) {
 
 func Test_Update_UseCase_Validation(t *testing.T) {
 	s := setup(t)
+	expected := entity.User{}
 	s.sqlMock.ExpectBegin()
+
+	s.repo.On("Get", mock.Anything, mock.Anything, 1).Return(s.ctx, nil, expected).Once()
 	_, e, r := s.uc.Update(s.ctx, 1, entity.User{})
+	
 	assert.Error(t, e)
 	assert.Equal(t, entity.User{}, r)
 	s.repo.AssertNotCalled(t, "Update")

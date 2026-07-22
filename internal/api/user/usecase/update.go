@@ -48,7 +48,7 @@ func (u *UpdateUC) Execute(ctx context.Context, id int, input entity.User) (retu
 		input.PasswordHash = result.PasswordHash
 	}
 
-	err = input.Validate()
+	err = input.Validate(false)
 	if err != nil {
 		return ctx, err, entity.User{}
 	}

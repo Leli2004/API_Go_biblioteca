@@ -38,7 +38,7 @@ func (u *CreateUC) Execute(ctx context.Context, input entity.User) (returnedCtx 
 		return ctx, err, entity.User{}
 	}
 
-	err = input.Validate()
+	err = input.Validate(true)
 	if err != nil {
 		return ctx, err, entity.User{}
 	}
