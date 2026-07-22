@@ -1,5 +1,15 @@
 # Rotas da API
 
+---
+
+## Auth
+
+| Método | Rota | Descrição |
+|---------|------|-----------|
+| POST | `/auth/login` | Executa login, solicita username e senha. |
+| GET | `/auth/me` | Retorna dados do usuário logado na sessão. |
+
+---
 ## Gêneros
 
 | Método | Rota | Descrição |
