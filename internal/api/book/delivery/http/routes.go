@@ -5,10 +5,10 @@ import (
 	"github.com/labstack/echo"
 )
 
-func MapRoutes(e *echo.Echo, h book.Handler) {
-	e.GET("book/list", h.List())
-	e.GET("book/:id", h.Get())
-	e.POST("book", h.Create())
-	e.PUT("book/:id", h.Update())
-	e.DELETE("book/:id", h.Delete())
+func MapRoutes(e *echo.Group, h book.Handler) {
+	e.GET("/list", h.List())
+	e.GET("/:id", h.Get())
+	e.POST("", h.Create())
+	e.PUT("/:id", h.Update())
+	e.DELETE("/:id", h.Delete())
 }
