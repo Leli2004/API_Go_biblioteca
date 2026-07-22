@@ -25,5 +25,5 @@ func (r *DeleteRepo) Execute(ctx context.Context, tx *sqlx.Tx, id int) (context.
 var deleteSql = `
 	DELETE FROM biblioteca.users
 	WHERE id = $1
-	RETURNING id, name, email, password_hash, phone, role, active, created_at, updated_at
+	RETURNING id, name, email, username, password_hash, phone, role, active, created_at, updated_at
 `

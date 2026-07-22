@@ -6,15 +6,15 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type GetRepo struct{}
+type GetByUsernameRepo struct{}
 
-func NewGetRepo() GetRepo {
-	return GetRepo{}
+func NewGetByUsernameRepo() GetByUsernameRepo {
+	return GetByUsernameRepo{}
 }
 
-func (r *GetRepo) Execute(ctx context.Context, tx *sqlx.Tx, id int) (context.Context, error, entity.User) {
+func (r *GetByUsernameRepo) Execute(ctx context.Context, tx *sqlx.Tx, username string) (context.Context, error, entity.User) {
 	var user entity.User
-	err := tx.GetContext(ctx, &user, getSql, id)
+	err := tx.GetContext(ctx, &user, getByUsernameSql, username)
 	if err != nil {
 		return ctx, err, entity.User{}
 	}
@@ -22,7 +22,7 @@ func (r *GetRepo) Execute(ctx context.Context, tx *sqlx.Tx, id int) (context.Con
 	return ctx, nil, user
 }
 
-var getSql = `
+var getByUsernameSql = `
 	SELECT
 		id,
 		name,
@@ -35,5 +35,6 @@ var getSql = `
 		created_at,
 		updated_at
 	FROM biblioteca.users
-	WHERE id = $1
+	WHERE username = $1
+	LIMIT 1
 `

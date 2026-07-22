@@ -8,8 +8,8 @@ SET search_path TO biblioteca;
 INSERT INTO users (id, name, email, password_hash, phone, role, active)
 VALUES
   (1, 'Admin User', 'admin@example.com', '$2y$10$adminhash', '000-000-0000', 'admin', TRUE),
-  (2, 'Librarian One', 'librarian@example.com', '$2y$10$librarianhash', '111-111-1111', 'librarian', TRUE),
-  (3, 'Member One', 'member1@example.com', '$2y$10$memberhash', '222-222-2222', 'member', TRUE);
+  (2, 'Librarian One', 'librarian@example.com', '$2y$10$librarianhash', '111-111-1111', 'admin', TRUE),
+  (3, 'Member One', 'member1@example.com', '$2y$10$memberhash', '222-222-2222', 'user', TRUE);
 
 -- Genres
 INSERT INTO genres (id, name, description)

@@ -8,3 +8,8 @@ database:
   user: "postgres"
   pass: "1234"
   name: "postgres"
+
+auth:
+  jwt_secret: "develop-secret"
+  jwt_issuer: "biblioteca-api"
+  jwt_expire_hours: 24

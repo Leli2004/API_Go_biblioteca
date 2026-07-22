@@ -9,12 +9,12 @@ CREATE TABLE users (
     email VARCHAR(150) NOT NULL,
     password_hash TEXT NOT NULL,
     phone VARCHAR(30),
-    role VARCHAR(30) NOT NULL DEFAULT 'member',
+    role VARCHAR(30) NOT NULL DEFAULT 'user',
     active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
 
-    CONSTRAINT chk_users_role CHECK (role IN ('admin', 'librarian', 'member'))
+    CONSTRAINT chk_users_role CHECK (role IN ('admin', 'user'))
 );
 
 CREATE TABLE genres (

@@ -14,4 +14,5 @@ type Repository interface {
 	Create(ctx context.Context, tx *sqlx.Tx, input entity.User) (context.Context, error, entity.User)
 	Update(ctx context.Context, tx *sqlx.Tx, id int, input entity.User) (context.Context, error, entity.User)
 	Delete(ctx context.Context, tx *sqlx.Tx, id int) (context.Context, error)
+	GetByUsername(ctx context.Context,tx *sqlx.Tx, username string) (context.Context, error, entity.User)
 }

@@ -218,6 +218,73 @@ func (_c *Repository_Get_Call) RunAndReturn(run func(context.Context, *sqlx.Tx, 
 	return _c
 }
 
+// GetByUsername provides a mock function with given fields: ctx, tx, username
+func (_m *Repository) GetByUsername(ctx context.Context, tx *sqlx.Tx, username string) (context.Context, error, entity.User) {
+	ret := _m.Called(ctx, tx, username)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetByUsername")
+	}
+
+	var r0 context.Context
+	var r1 error
+	var r2 entity.User
+	if rf, ok := ret.Get(0).(func(context.Context, *sqlx.Tx, string) (context.Context, error, entity.User)); ok {
+		return rf(ctx, tx, username)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *sqlx.Tx, string) context.Context); ok {
+		r0 = rf(ctx, tx, username)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(context.Context)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *sqlx.Tx, string) error); ok {
+		r1 = rf(ctx, tx, username)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	if rf, ok := ret.Get(2).(func(context.Context, *sqlx.Tx, string) entity.User); ok {
+		r2 = rf(ctx, tx, username)
+	} else {
+		r2 = ret.Get(2).(entity.User)
+	}
+
+	return r0, r1, r2
+}
+
+// Repository_GetByUsername_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByUsername'
+type Repository_GetByUsername_Call struct {
+	*mock.Call
+}
+
+// GetByUsername is a helper method to define mock.On call
+//   - ctx context.Context
+//   - tx *sqlx.Tx
+//   - username string
+func (_e *Repository_Expecter) GetByUsername(ctx interface{}, tx interface{}, username interface{}) *Repository_GetByUsername_Call {
+	return &Repository_GetByUsername_Call{Call: _e.mock.On("GetByUsername", ctx, tx, username)}
+}
+
+func (_c *Repository_GetByUsername_Call) Run(run func(ctx context.Context, tx *sqlx.Tx, username string)) *Repository_GetByUsername_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(*sqlx.Tx), args[2].(string))
+	})
+	return _c
+}
+
+func (_c *Repository_GetByUsername_Call) Return(_a0 context.Context, _a1 error, _a2 entity.User) *Repository_GetByUsername_Call {
+	_c.Call.Return(_a0, _a1, _a2)
+	return _c
+}
+
+func (_c *Repository_GetByUsername_Call) RunAndReturn(run func(context.Context, *sqlx.Tx, string) (context.Context, error, entity.User)) *Repository_GetByUsername_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // List provides a mock function with given fields: ctx, tx, input
 func (_m *Repository) List(ctx context.Context, tx *sqlx.Tx, input entity.UserFilters) (context.Context, error, entity.UserList) {
 	ret := _m.Called(ctx, tx, input)
