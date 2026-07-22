@@ -46,6 +46,12 @@ import (
 	fineRepository "github.com/Leli2004/API_Go_biblioteca/internal/api/fine/repository"
 	fineUseCase "github.com/Leli2004/API_Go_biblioteca/internal/api/fine/usecase"
 	"github.com/Leli2004/API_Go_biblioteca/internal/worker"
+
+	authHttp "github.com/Leli2004/API_Go_biblioteca/internal/api/auth/delivery/http"
+	authUseCase "github.com/Leli2004/API_Go_biblioteca/internal/api/auth/usecase"
+
+	appMiddleware "github.com/Leli2004/API_Go_biblioteca/internal/middleware"
+	"github.com/Leli2004/API_Go_biblioteca/internal/security"
 )
 
 func main() {
@@ -61,59 +67,72 @@ func main() {
 
 	e := echo.New()
 
+	tokenManager, err := security.NewTokenManager(config.GetJWTSecret(), config.GetJWTIssuer(), config.GetJWTExpiration())
+	if err != nil {
+		panic(fmt.Errorf("ERROR: erro ao configurar JWT: %w", err))
+	}
+
+	jwtMiddleware := appMiddleware.NewJWTMiddleware(tokenManager)
+
 	// Author
 	authorRepo := authorRepository.NewRepository()
 	authorUC := authorUseCase.NewUseCase(dbSqlx, authorRepo)
 	authorhandler := authorHttp.NewHandler(authorUC)
-	authorHttp.MapRoutes(e, authorhandler)
+	authorHttp.MapRoutes(e.Group("/author", jwtMiddleware.Handler()), authorhandler)
 
 	// Genre
 	genreRepo := genreRepository.NewRepository()
 	genreUC := genreUseCase.NewUseCase(dbSqlx, genreRepo)
 	genreHandler := genreHttp.NewHandler(genreUC)
-	genreHttp.MapRoutes(e, genreHandler)
+	genreHttp.MapRoutes(e.Group("/genre", jwtMiddleware.Handler()), genreHandler)
 
 	// Publisher
 	publisherRepo := publisherRepository.NewRepository()
 	publisherUC := publisherUseCase.NewUseCase(dbSqlx, publisherRepo)
 	publisherHandler := publisherHttp.NewHandler(publisherUC)
-	publisherHttp.MapRoutes(e, publisherHandler)
+	publisherHttp.MapRoutes(e.Group("/publisher", jwtMiddleware.Handler()), publisherHandler)
 
 	// Book
 	bookRepo := bookRepository.NewRepository()
 	bookUC := bookUseCase.NewUseCase(dbSqlx, bookRepo)
 	bookHandler := bookHttp.NewHandler(bookUC)
-	bookHttp.MapRoutes(e, bookHandler)
+	bookHttp.MapRoutes(e.Group("/book", jwtMiddleware.Handler()), bookHandler)
 
 	// Book Copie
 	bookCopieRepo := bookCopieRepository.NewRepository()
 	bookCopieUC := bookCopieUseCase.NewUseCase(dbSqlx, bookCopieRepo)
 	bookCopieHandler := bookCopieHttp.NewHandler(bookCopieUC)
-	bookCopieHttp.MapRoutes(e, bookCopieHandler)
+	bookCopieHttp.MapRoutes(e.Group("/book_copie", jwtMiddleware.Handler()), bookCopieHandler)
 
 	// User
 	userRepo := userRepository.NewRepository()
 	userUC := userUseCase.NewUseCase(dbSqlx, userRepo)
 	userHandler := userHttp.NewHandler(userUC)
-	userHttp.MapRoutes(e, userHandler)
+	userHttp.MapRoutes(e.Group("/user", jwtMiddleware.Handler()), userHandler)
+
+	// Auth
+	authUC := authUseCase.NewUseCase(dbSqlx, userRepo, tokenManager)
+	authHandler := authHttp.NewHandler(authUC)
+	authHttp.MapPublicRoutes(e, authHandler)                                       // Rota pública: não exige JWT
+	authHttp.MapProtectedRoutes(e.Group("", jwtMiddleware.Handler()), authHandler) // Rota protegida: exige JWT
 
 	// Loan
 	loanRepo := loanRepository.NewRepository()
 	loanUC := loanUseCase.NewUseCase(dbSqlx, loanRepo)
 	loanHandler := loanHttp.NewHandler(loanUC)
-	loanHttp.MapRoutes(e, loanHandler)
+	loanHttp.MapRoutes(e.Group("/loan", jwtMiddleware.Handler()), loanHandler)
 
 	// Reservation
 	reservationRepo := reservationRepository.NewRepository()
 	reservationUC := reservationUseCase.NewUseCase(dbSqlx, reservationRepo)
 	reservationHandler := reservationHttp.NewHandler(reservationUC)
-	reservationHttp.MapRoutes(e, reservationHandler)
+	reservationHttp.MapRoutes(e.Group("/reservation", jwtMiddleware.Handler()), reservationHandler)
 
 	// Fine checker worker
 	fineRepo := fineRepository.NewRepository()
 	fineUC := fineUseCase.NewUseCase(dbSqlx, fineRepo)
 	fineChecker := worker.NewFineChecker(fineUC)
-	
+
 	workerCtx, cancelWorker := context.WithCancel(context.Background())
 	defer cancelWorker()
 	go fineChecker.Run(workerCtx)
