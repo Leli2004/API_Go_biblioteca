@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+
 	"github.com/Leli2004/API_Go_biblioteca/internal/api/genre"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
@@ -16,8 +17,8 @@ type GenreUC struct {
 	repo     genre.Repository
 }
 
-func NewUseCase(db *sqlx.DB, repo genre.Repository) GenreUC {
-	return GenreUC{
+func NewUseCase(db *sqlx.DB, repo genre.Repository) *GenreUC {
+	return &GenreUC{
 		listUC:   NewListUC(db, repo),
 		getUC:    NewGetUC(db, repo),
 		createUC: NewCreateUC(db, repo),

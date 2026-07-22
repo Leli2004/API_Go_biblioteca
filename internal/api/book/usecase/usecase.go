@@ -16,8 +16,8 @@ type BookUC struct {
 	repo     book.Repository
 }
 
-func NewUseCase(db *sqlx.DB, repo book.Repository) BookUC {
-	return BookUC{
+func NewUseCase(db *sqlx.DB, repo book.Repository) *BookUC {
+	return &BookUC{
 		listUC:   NewListUC(db, repo),
 		getUC:    NewGetUC(db, repo),
 		createUC: NewCreateUC(db, repo),

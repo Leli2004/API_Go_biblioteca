@@ -1,4 +1,4 @@
-.PHONY: help db-up db-down db-logs db-shell db-create run test tidy build clean
+.PHONY: help db-up db-down db-logs db-shell db-create run test tidy build clean unit-test-api
 
 APP_NAME=api_biblioteca
 DB_CONTAINER=postgres
@@ -16,18 +16,19 @@ DATABASE_URL=postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAM
 
 help:
 	@echo "Comandos disponíveis:"
-	@echo "  make db-up        - Sobe o container PostgreSQL"
-	@echo "  make db-down      - Remove o container PostgreSQL"
-	@echo "  make db-logs      - Mostra os logs do PostgreSQL"
-	@echo "  make db-shell     - Conecta no psql do container"
-	@echo "  make db-create    - Cria o banco da aplicação"
-	@echo "  make run          - Executa a API"
-	@echo "  make test         - Executa os testes"
-	@echo "  make tidy         - Organiza dependências Go"
-	@echo "  make build        - Compila a aplicação"
-	@echo "  make clean        - Remove arquivos gerados"
-	@echo "  make migrate-all  - Executa migrate completo"
-	@echo "  make migrate-down - Remove a última migration aplicada"
+	@echo "  make db-up         - Sobe o container PostgreSQL"
+	@echo "  make db-down       - Remove o container PostgreSQL"
+	@echo "  make db-logs       - Mostra os logs do PostgreSQL"
+	@echo "  make db-shell      - Conecta no psql do container"
+	@echo "  make db-create     - Cria o banco da aplicação"
+	@echo "  make run           - Executa a API"
+	@echo "  make test          - Executa os testes"
+	@echo "  make tidy          - Organiza dependências Go"
+	@echo "  make build         - Compila a aplicação"
+	@echo "  make clean         - Remove arquivos gerados"
+	@echo "  make migrate-all   - Executa migrate completo"
+	@echo "  make migrate-down  - Remove a última migration aplicada"
+	@echo "  make unit-test-api - Executa os testes unitários de ./internal/api/"
 
 #****************************************************#
 # Database
@@ -74,5 +75,12 @@ migrate-down:
 
 migrate-seed:
 	psql "$(DATABASE_URL)" -f ./migration/seed/init.sql
+
+#****************************************************#
+# Tests
+
+unit-test-api:
+	chmod +x scripts/unit-test-api.sh
+	./scripts/unit-test-api.sh
 
 #****************************************************#

@@ -88,7 +88,7 @@ func main() {
 	// Loan
 	loanRepo := loanRepository.NewRepository()
 	loanUC := loanUseCase.NewUseCase(dbSqlx, loanRepo)
-	loanHandler := loanHttp.NewHandler(&loanUC)
+	loanHandler := loanHttp.NewHandler(loanUC)
 	loanHttp.MapRoutes(e, loanHandler)
 
 	e.Start(fmt.Sprintf(":%s", config.GetServerPort()))

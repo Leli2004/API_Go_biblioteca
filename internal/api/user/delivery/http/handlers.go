@@ -5,17 +5,17 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Leli2004/API_Go_biblioteca/internal/api/user/usecase"
+	"github.com/Leli2004/API_Go_biblioteca/internal/api/user"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/Leli2004/API_Go_biblioteca/internal/helpers"
 	"github.com/labstack/echo"
 )
 
 type Handler struct {
-	userUC usecase.UserUC
+	userUC user.UseCase
 }
 
-func NewHandler(userUC usecase.UserUC) *Handler {
+func NewHandler(userUC user.UseCase) *Handler {
 	return &Handler{userUC: userUC}
 }
 

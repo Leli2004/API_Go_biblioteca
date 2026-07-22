@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+
 	"github.com/Leli2004/API_Go_biblioteca/internal/api/user"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
@@ -16,8 +17,8 @@ type UserUC struct {
 	repo     user.Repository
 }
 
-func NewUseCase(db *sqlx.DB, repo user.Repository) UserUC {
-	return UserUC{
+func NewUseCase(db *sqlx.DB, repo user.Repository) *UserUC {
+	return &UserUC{
 		listUC:   NewListUC(db, repo),
 		getUC:    NewGetUC(db, repo),
 		createUC: NewCreateUC(db, repo),

@@ -3,17 +3,17 @@ package http
 import (
 	"strconv"
 
-	loanu "github.com/Leli2004/API_Go_biblioteca/internal/api/loan"
+	"github.com/Leli2004/API_Go_biblioteca/internal/api/loan"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/Leli2004/API_Go_biblioteca/internal/helpers"
 	"github.com/labstack/echo"
 )
 
 type Handler struct {
-	loanUC loanu.UseCase
+	loanUC loan.UseCase
 }
 
-func NewHandler(loanUC loanu.UseCase) *Handler {
+func NewHandler(loanUC loan.UseCase) *Handler {
 	return &Handler{loanUC: loanUC}
 }
 
