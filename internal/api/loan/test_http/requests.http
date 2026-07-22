@@ -1,0 +1,28 @@
+### List Loan
+GET http://localhost:8001/loan/list?offset=0&limit=20
+
+### Get Loan
+GET http://localhost:8001/loan/1
+
+### Create Loan
+POST http://localhost:8001/loan/create
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "book_copy_id": 1,
+  "loan_date": "2026-07-13T10:00:00Z",
+  "due_date": "2026-07-27T10:00:00Z"
+}
+
+### Return Loan
+POST http://localhost:8001/loan/return
+Content-Type: application/json
+
+{
+  "loan_id": 1,
+  "returned_at": "2026-07-20T12:00:00Z"
+}
+
+### Delete Loan
+DELETE http://localhost:8001/loan/1

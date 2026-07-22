@@ -1,0 +1,26 @@
+### List Genre
+GET http://localhost:8001/genre/list?offset=0&limit=20
+
+### Get Genre
+GET http://localhost:8001/genre/1
+
+### Create Genre
+POST http://localhost:8001/genre
+Content-Type: application/json
+
+{
+  "name": "Fantasia",
+  "description": "Ficção com elementos mágicos ou sobrenaturais."
+}
+
+### Update Genre
+PUT http://localhost:8001/genre/2
+Content-Type: application/json
+
+{
+  "name": "Fantasia",
+  "description": "Ficção com elementos mágicos e/ou sobrenaturais."
+}
+
+### Delete Genre
+DELETE http://localhost:8001/genre/1

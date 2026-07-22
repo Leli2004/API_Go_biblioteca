@@ -1,0 +1,10 @@
+
+api:
+  port: "8001"
+
+database:
+  host: "localhost"
+  port: "5433"
+  user: "postgres"
+  pass: "1234"
+  name: "postgres"

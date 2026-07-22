@@ -1,0 +1,14 @@
+
+SET search_path TO biblioteca;
+
+DROP TABLE IF EXISTS fines;
+DROP TABLE IF EXISTS reservations;
+DROP TABLE IF EXISTS loans;
+DROP TABLE IF EXISTS book_copies;
+DROP TABLE IF EXISTS book_genres;
+DROP TABLE IF EXISTS book_authors;
+DROP TABLE IF EXISTS books;
+DROP TABLE IF EXISTS publishers;
+DROP TABLE IF EXISTS authors;
+DROP TABLE IF EXISTS genres;
+DROP TABLE IF EXISTS users;

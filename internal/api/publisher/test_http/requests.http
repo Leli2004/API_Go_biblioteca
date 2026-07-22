@@ -1,0 +1,26 @@
+### List Publisher
+GET http://localhost:8001/publisher/list?offset\=0\&limit\=20
+
+### Get Publisher
+GET http://localhost:8001/publisher/1
+
+### Create Publisher
+POST http://localhost:8001/publisher
+Content-Type: application/json
+
+{
+  "name": "Editora Exemplo",
+  "website": "https://editora.exemplo"
+}
+
+### Update Publisher
+PUT http://localhost:8001/publisher/1
+Content-Type: application/json
+
+{
+  "name": "Editora Exemplo Atualizada",
+  "website": "https://editora.exemplo/novo"
+}
+
+### Delete Publisher
+DELETE http://localhost:8001/publisher/1

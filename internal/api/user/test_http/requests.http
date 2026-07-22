@@ -1,0 +1,34 @@
+### List User
+GET http://localhost:8001/user/list?offset=0&limit=20
+
+### Get User
+GET http://localhost:8001/user/1
+
+### Create User
+POST http://localhost:8001/user
+Content-Type: application/json
+
+{
+  "name": "Maria Silva",
+  "email": "maria.silva@example.com",
+  "password_hash": "hashed_password_123",
+  "phone": "+55 11 99999-9999",
+  "role": "member",
+  "active": true
+}
+
+### Update User
+PUT http://localhost:8001/user/1
+Content-Type: application/json
+
+{
+  "name": "Maria S. Oliveira",
+  "email": "maria.oliveira@example.com",
+  "password_hash": "new_hashed_password",
+  "phone": "+55 11 98888-8888",
+  "role": "librarian",
+  "active": true
+}
+
+### Delete User
+DELETE http://localhost:8001/user/1
