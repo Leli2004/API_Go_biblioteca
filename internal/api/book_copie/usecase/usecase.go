@@ -36,14 +36,14 @@ func (u *BookCopieUC) Get(ctx context.Context, id int) (context.Context, error, 
 	return u.getUC.Execute(ctx, id)
 }
 
-func (u *BookCopieUC) Create(ctx context.Context, input entity.BookCopy) (context.Context, error, entity.BookCopy) {
-	return u.createUC.Execute(ctx, input)
+func (u *BookCopieUC) Create(ctx context.Context, input entity.BookCopy, claims *entity.AuthClaims) (context.Context, error, entity.BookCopy) {
+	return u.createUC.Execute(ctx, input, claims)
 }
 
-func (u *BookCopieUC) Update(ctx context.Context, id int, input entity.BookCopy) (context.Context, error, entity.BookCopy) {
-	return u.updateUC.Execute(ctx, id, input)
+func (u *BookCopieUC) Update(ctx context.Context, id int, input entity.BookCopy, claims *entity.AuthClaims) (context.Context, error, entity.BookCopy) {
+	return u.updateUC.Execute(ctx, id, input, claims)
 }
 
-func (u *BookCopieUC) Delete(ctx context.Context, id int) (context.Context, error) {
-	return u.deleteUC.Execute(ctx, id)
+func (u *BookCopieUC) Delete(ctx context.Context, id int, claims *entity.AuthClaims) (context.Context, error) {
+	return u.deleteUC.Execute(ctx, id, claims)
 }

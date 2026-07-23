@@ -11,6 +11,7 @@ import (
 
 	authorMock "github.com/Leli2004/API_Go_biblioteca/internal/api/author/mocks"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
+	"github.com/Leli2004/API_Go_biblioteca/internal/middleware"
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -259,9 +260,13 @@ func Test_Create_Handler(t *testing.T) {
 			Name: input.Name,
 		}
 
+		claims := &entity.AuthClaims{
+			Role: entity.RoleAdmin,
+		}
+
 		setup.useCase.
 			EXPECT().
-			Create(mock.Anything, input).
+			Create(mock.Anything, input, claims).
 			Return(setup.ctx, nil, expected).
 			Once()
 
@@ -281,6 +286,11 @@ func Test_Create_Handler(t *testing.T) {
 
 		response := httptest.NewRecorder()
 		echoCtx := setup.echo.NewContext(request, response)
+
+		echoCtx.Set(
+			middleware.AuthClaimsContextKey,
+			claims,
+		)
 
 		err = setup.handler.Create()(echoCtx)
 
@@ -311,6 +321,13 @@ func Test_Create_Handler(t *testing.T) {
 		response := httptest.NewRecorder()
 		echoCtx := setup.echo.NewContext(request, response)
 
+		echoCtx.Set(
+			middleware.AuthClaimsContextKey,
+			&entity.AuthClaims{
+				Role: entity.RoleAdmin,
+			},
+		)
+
 		err := setup.handler.Create()(echoCtx)
 
 		assert.NoError(t, err)
@@ -325,11 +342,17 @@ func Test_Create_Handler(t *testing.T) {
 			Name: "Conceição Evaristo",
 		}
 
-		expectedError := errors.New("erro ao criar autor")
+		expectedError := errors.New(
+			"erro ao criar autor",
+		)
+
+		claims := &entity.AuthClaims{
+			Role: entity.RoleAdmin,
+		}
 
 		setup.useCase.
 			EXPECT().
-			Create(mock.Anything, input).
+			Create(mock.Anything, input, claims).
 			Return(setup.ctx, expectedError, entity.Author{}).
 			Once()
 
@@ -349,6 +372,11 @@ func Test_Create_Handler(t *testing.T) {
 
 		response := httptest.NewRecorder()
 		echoCtx := setup.echo.NewContext(request, response)
+
+		echoCtx.Set(
+			middleware.AuthClaimsContextKey,
+			claims,
+		)
 
 		err = setup.handler.Create()(echoCtx)
 
@@ -373,9 +401,13 @@ func Test_Update_Handler(t *testing.T) {
 			Name: input.Name,
 		}
 
+		claims := &entity.AuthClaims{
+			Role: entity.RoleAdmin,
+		}
+
 		setup.useCase.
 			EXPECT().
-			Update(mock.Anything, id, input).
+			Update(mock.Anything, id, input, claims).
 			Return(setup.ctx, nil, expected).
 			Once()
 
@@ -399,6 +431,12 @@ func Test_Update_Handler(t *testing.T) {
 		echoCtx.SetPath("/author/:id")
 		echoCtx.SetParamNames("id")
 		echoCtx.SetParamValues("1")
+
+		// Simula as claims inseridas pelo JWT middleware.
+		echoCtx.Set(
+			middleware.AuthClaimsContextKey,
+			claims,
+		)
 
 		err = setup.handler.Update()(echoCtx)
 
@@ -440,6 +478,14 @@ func Test_Update_Handler(t *testing.T) {
 		echoCtx.SetParamNames("id")
 		echoCtx.SetParamValues("invalid")
 
+		// Simula autenticação para o teste chegar à validação do ID.
+		echoCtx.Set(
+			middleware.AuthClaimsContextKey,
+			&entity.AuthClaims{
+				Role: entity.RoleAdmin,
+			},
+		)
+
 		err = setup.handler.Update()(echoCtx)
 
 		assert.NoError(t, err)
@@ -468,6 +514,14 @@ func Test_Update_Handler(t *testing.T) {
 		echoCtx.SetParamNames("id")
 		echoCtx.SetParamValues("1")
 
+		// Simula autenticação para o teste chegar à validação do JSON.
+		echoCtx.Set(
+			middleware.AuthClaimsContextKey,
+			&entity.AuthClaims{
+				Role: entity.RoleAdmin,
+			},
+		)
+
 		err := setup.handler.Update()(echoCtx)
 
 		assert.NoError(t, err)
@@ -484,11 +538,17 @@ func Test_Update_Handler(t *testing.T) {
 			Name: "Machado de Assis Atualizado",
 		}
 
-		expectedError := errors.New("erro ao atualizar autor")
+		expectedError := errors.New(
+			"erro ao atualizar autor",
+		)
+
+		claims := &entity.AuthClaims{
+			Role: entity.RoleAdmin,
+		}
 
 		setup.useCase.
 			EXPECT().
-			Update(mock.Anything, id, input).
+			Update(mock.Anything, id, input, claims).
 			Return(setup.ctx, expectedError, entity.Author{}).
 			Once()
 
@@ -513,6 +573,12 @@ func Test_Update_Handler(t *testing.T) {
 		echoCtx.SetParamNames("id")
 		echoCtx.SetParamValues("1")
 
+		// Simula autenticação para o teste chegar ao use case.
+		echoCtx.Set(
+			middleware.AuthClaimsContextKey,
+			claims,
+		)
+
 		err = setup.handler.Update()(echoCtx)
 
 		assert.NoError(t, err)
@@ -527,9 +593,13 @@ func Test_Delete_Handler(t *testing.T) {
 
 		id := 1
 
+		claims := &entity.AuthClaims{
+			Role: entity.RoleAdmin,
+		}
+
 		setup.useCase.
 			EXPECT().
-			Delete(mock.Anything, id).
+			Delete(mock.Anything, id, claims).
 			Return(setup.ctx, nil).
 			Once()
 
@@ -545,6 +615,11 @@ func Test_Delete_Handler(t *testing.T) {
 		echoCtx.SetPath("/author/:id")
 		echoCtx.SetParamNames("id")
 		echoCtx.SetParamValues("1")
+
+		echoCtx.Set(
+			middleware.AuthClaimsContextKey,
+			claims,
+		)
 
 		err := setup.handler.Delete()(echoCtx)
 
@@ -568,6 +643,13 @@ func Test_Delete_Handler(t *testing.T) {
 		echoCtx.SetParamNames("id")
 		echoCtx.SetParamValues("invalid")
 
+		echoCtx.Set(
+			middleware.AuthClaimsContextKey,
+			&entity.AuthClaims{
+				Role: entity.RoleAdmin,
+			},
+		)
+
 		err := setup.handler.Delete()(echoCtx)
 
 		assert.NoError(t, err)
@@ -579,11 +661,18 @@ func Test_Delete_Handler(t *testing.T) {
 		setup := setup(t)
 
 		id := 1
-		expectedError := errors.New("erro ao excluir autor")
+
+		expectedError := errors.New(
+			"erro ao excluir autor",
+		)
+
+		claims := &entity.AuthClaims{
+			Role: entity.RoleAdmin,
+		}
 
 		setup.useCase.
 			EXPECT().
-			Delete(mock.Anything, id).
+			Delete(mock.Anything, id, claims).
 			Return(setup.ctx, expectedError).
 			Once()
 
@@ -599,6 +688,11 @@ func Test_Delete_Handler(t *testing.T) {
 		echoCtx.SetPath("/author/:id")
 		echoCtx.SetParamNames("id")
 		echoCtx.SetParamValues("1")
+
+		echoCtx.Set(
+			middleware.AuthClaimsContextKey,
+			claims,
+		)
 
 		err := setup.handler.Delete()(echoCtx)
 

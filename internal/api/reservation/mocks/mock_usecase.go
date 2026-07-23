@@ -22,9 +22,9 @@ func (_m *UseCase) EXPECT() *UseCase_Expecter {
 	return &UseCase_Expecter{mock: &_m.Mock}
 }
 
-// Create provides a mock function with given fields: ctx, input
-func (_m *UseCase) Create(ctx context.Context, input entity.Reservation) (context.Context, error, entity.Reservation) {
-	ret := _m.Called(ctx, input)
+// Create provides a mock function with given fields: ctx, input, claims
+func (_m *UseCase) Create(ctx context.Context, input entity.Reservation, claims *entity.AuthClaims) (context.Context, error, entity.Reservation) {
+	ret := _m.Called(ctx, input, claims)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
@@ -33,25 +33,25 @@ func (_m *UseCase) Create(ctx context.Context, input entity.Reservation) (contex
 	var r0 context.Context
 	var r1 error
 	var r2 entity.Reservation
-	if rf, ok := ret.Get(0).(func(context.Context, entity.Reservation) (context.Context, error, entity.Reservation)); ok {
-		return rf(ctx, input)
+	if rf, ok := ret.Get(0).(func(context.Context, entity.Reservation, *entity.AuthClaims) (context.Context, error, entity.Reservation)); ok {
+		return rf(ctx, input, claims)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, entity.Reservation) context.Context); ok {
-		r0 = rf(ctx, input)
+	if rf, ok := ret.Get(0).(func(context.Context, entity.Reservation, *entity.AuthClaims) context.Context); ok {
+		r0 = rf(ctx, input, claims)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(context.Context)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, entity.Reservation) error); ok {
-		r1 = rf(ctx, input)
+	if rf, ok := ret.Get(1).(func(context.Context, entity.Reservation, *entity.AuthClaims) error); ok {
+		r1 = rf(ctx, input, claims)
 	} else {
 		r1 = ret.Error(1)
 	}
 
-	if rf, ok := ret.Get(2).(func(context.Context, entity.Reservation) entity.Reservation); ok {
-		r2 = rf(ctx, input)
+	if rf, ok := ret.Get(2).(func(context.Context, entity.Reservation, *entity.AuthClaims) entity.Reservation); ok {
+		r2 = rf(ctx, input, claims)
 	} else {
 		r2 = ret.Get(2).(entity.Reservation)
 	}
@@ -67,13 +67,14 @@ type UseCase_Create_Call struct {
 // Create is a helper method to define mock.On call
 //   - ctx context.Context
 //   - input entity.Reservation
-func (_e *UseCase_Expecter) Create(ctx interface{}, input interface{}) *UseCase_Create_Call {
-	return &UseCase_Create_Call{Call: _e.mock.On("Create", ctx, input)}
+//   - claims *entity.AuthClaims
+func (_e *UseCase_Expecter) Create(ctx interface{}, input interface{}, claims interface{}) *UseCase_Create_Call {
+	return &UseCase_Create_Call{Call: _e.mock.On("Create", ctx, input, claims)}
 }
 
-func (_c *UseCase_Create_Call) Run(run func(ctx context.Context, input entity.Reservation)) *UseCase_Create_Call {
+func (_c *UseCase_Create_Call) Run(run func(ctx context.Context, input entity.Reservation, claims *entity.AuthClaims)) *UseCase_Create_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(entity.Reservation))
+		run(args[0].(context.Context), args[1].(entity.Reservation), args[2].(*entity.AuthClaims))
 	})
 	return _c
 }
@@ -83,7 +84,7 @@ func (_c *UseCase_Create_Call) Return(_a0 context.Context, _a1 error, _a2 entity
 	return _c
 }
 
-func (_c *UseCase_Create_Call) RunAndReturn(run func(context.Context, entity.Reservation) (context.Context, error, entity.Reservation)) *UseCase_Create_Call {
+func (_c *UseCase_Create_Call) RunAndReturn(run func(context.Context, entity.Reservation, *entity.AuthClaims) (context.Context, error, entity.Reservation)) *UseCase_Create_Call {
 	_c.Call.Return(run)
 	return _c
 }

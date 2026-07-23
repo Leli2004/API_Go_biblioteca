@@ -32,6 +32,7 @@ var listSql = `
 		id,
 		name,
 		email,
+		username,
 		password_hash,
 		phone,
 		role,

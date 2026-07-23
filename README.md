@@ -108,13 +108,8 @@ make db-down
 
 ## TODO
 
-* [ ] Implementar login, JWT e funcionalidades
-    - aplicar JWT
-    - autorização por perfil
-    - restringir operações e listas por perfil
-
 * [ ] Implementar cache com Redis.
 
-* [ ] Front-end (somente para facilitar uso das requests).
+* [ ] Front-end (somente para facilitar uso das requests, diretório ./web).
 
 ---

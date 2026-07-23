@@ -2,9 +2,11 @@ package usecase
 
 import (
 	"context"
+
 	book_copie "github.com/Leli2004/API_Go_biblioteca/internal/api/book_copie"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/Leli2004/API_Go_biblioteca/internal/helpers"
+	"github.com/Leli2004/API_Go_biblioteca/internal/security"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -17,7 +19,11 @@ func NewUpdateUC(db *sqlx.DB, repo book_copie.Repository) UpdateUC {
 	return UpdateUC{db: db, repo: repo}
 }
 
-func (u *UpdateUC) Execute(ctx context.Context, id int, input entity.BookCopy) (returnedCtx context.Context, err error, result entity.BookCopy) {
+func (u *UpdateUC) Execute(ctx context.Context, id int, input entity.BookCopy, claims *entity.AuthClaims) (returnedCtx context.Context, err error, result entity.BookCopy) {
+	if err := security.ValidateRoles(claims, entity.RoleAdmin); err != nil {
+		return ctx, err, result
+	}
+
 	tx, err := helpers.OpenTransaction(ctx, u.db)
 	if err != nil {
 		return ctx, err, result

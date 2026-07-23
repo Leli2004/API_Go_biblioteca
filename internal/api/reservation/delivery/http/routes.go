@@ -5,6 +5,6 @@ import (
 	"github.com/labstack/echo"
 )
 
-func MapRoutes(e *echo.Echo, h reservation.Handler) {
-	e.POST("/reservation/create", h.Create())
+func MapRoutes(e *echo.Group, h reservation.Handler) {
+	e.POST("/create", h.Create())
 }

@@ -9,5 +9,5 @@ import (
 //go:generate mockery --name=UseCase --dir=. --output=mocks --filename=mock_usecase.go --with-expecter=True
 
 type UseCase interface {
-	Create(ctx context.Context, input entity.Reservation) (context.Context, error, entity.Reservation)
+	Create(ctx context.Context, input entity.Reservation, claims *entity.AuthClaims) (context.Context, error, entity.Reservation)
 }

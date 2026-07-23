@@ -8,6 +8,7 @@ import (
 	"github.com/Leli2004/API_Go_biblioteca/internal/api/book_copie"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/Leli2004/API_Go_biblioteca/internal/helpers"
+	"github.com/Leli2004/API_Go_biblioteca/internal/middleware"
 	"github.com/labstack/echo"
 )
 
@@ -72,7 +73,12 @@ func (h *Handler) Create() echo.HandlerFunc {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
 
-		ctx, err, resp := h.bookCopieUC.Create(ctx, input)
+		claims, err := middleware.GetAuthClaims(c)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, "unauthorized")
+		}
+
+		ctx, err, resp := h.bookCopieUC.Create(ctx, input, claims)
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
@@ -94,7 +100,12 @@ func (h *Handler) Update() echo.HandlerFunc {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
 
-		ctx, err, resp := h.bookCopieUC.Update(ctx, id, input)
+		claims, err := middleware.GetAuthClaims(c)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, "unauthorized")
+		}
+
+		ctx, err, resp := h.bookCopieUC.Update(ctx, id, input, claims)
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
@@ -111,7 +122,12 @@ func (h *Handler) Delete() echo.HandlerFunc {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)
 		}
 
-		ctx, err = h.bookCopieUC.Delete(ctx, id)
+		claims, err := middleware.GetAuthClaims(c)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, "unauthorized")
+		}
+
+		ctx, err = h.bookCopieUC.Delete(ctx, id, claims)
 
 		if err != nil {
 			return helpers.ResponseErrorHTTP(c, helpers.REPONSE_HTTP_BAD_REQUEST, err)

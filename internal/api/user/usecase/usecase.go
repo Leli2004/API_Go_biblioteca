@@ -36,14 +36,14 @@ func (u *UserUC) Get(ctx context.Context, id int) (context.Context, error, entit
 	return u.getUC.Execute(ctx, id)
 }
 
-func (u *UserUC) Create(ctx context.Context, input entity.User) (context.Context, error, entity.User) {
-	return u.createUC.Execute(ctx, input)
+func (u *UserUC) Create(ctx context.Context, input entity.User, claims *entity.AuthClaims) (context.Context, error, entity.User) {
+	return u.createUC.Execute(ctx, input, claims)
 }
 
-func (u *UserUC) Update(ctx context.Context, id int, input entity.User) (context.Context, error, entity.User) {
-	return u.updateUC.Execute(ctx, id, input)
+func (u *UserUC) Update(ctx context.Context, id int, input entity.User, claims *entity.AuthClaims) (context.Context, error, entity.User) {
+	return u.updateUC.Execute(ctx, id, input, claims)
 }
 
-func (u *UserUC) Delete(ctx context.Context, id int) (context.Context, error) {
-	return u.deleteUC.Execute(ctx, id)
+func (u *UserUC) Delete(ctx context.Context, id int, claims *entity.AuthClaims) (context.Context, error) {
+	return u.deleteUC.Execute(ctx, id, claims)
 }

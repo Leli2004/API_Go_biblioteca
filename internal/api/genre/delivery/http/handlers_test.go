@@ -24,6 +24,7 @@ func Test_List_Handler(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, rec.Code)
 }
+
 func Test_Get_Handler_InvalidID(t *testing.T) {
 	e := echo.New()
 	u := mm.NewUseCase(t)
@@ -38,6 +39,7 @@ func Test_Get_Handler_InvalidID(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, rec.Code)
 	u.AssertNotCalled(t, "Get")
 }
+
 func Test_Delete_Handler_InvalidID(t *testing.T) {
 	e := echo.New()
 	u := mm.NewUseCase(t)

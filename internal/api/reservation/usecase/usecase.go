@@ -21,7 +21,7 @@ func NewUseCase(db *sqlx.DB, repo reservation.Repository) *ReservationUC {
 	return &ReservationUC{db: db, repo: repo}
 }
 
-func (u *ReservationUC) Create(ctx context.Context, input entity.Reservation) (returnedCtx context.Context, err error, result entity.Reservation) {
+func (u *ReservationUC) Create(ctx context.Context, input entity.Reservation, claims *entity.AuthClaims) (returnedCtx context.Context, err error, result entity.Reservation) {
 	tx, err := helpers.OpenTransaction(ctx, u.db)
 	if err != nil {
 		return ctx, err, result

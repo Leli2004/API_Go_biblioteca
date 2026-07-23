@@ -22,9 +22,9 @@ func (_m *UseCase) EXPECT() *UseCase_Expecter {
 	return &UseCase_Expecter{mock: &_m.Mock}
 }
 
-// Create provides a mock function with given fields: ctx, input
-func (_m *UseCase) Create(ctx context.Context, input entity.User) (context.Context, error, entity.User) {
-	ret := _m.Called(ctx, input)
+// Create provides a mock function with given fields: ctx, input, claims
+func (_m *UseCase) Create(ctx context.Context, input entity.User, claims *entity.AuthClaims) (context.Context, error, entity.User) {
+	ret := _m.Called(ctx, input, claims)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
@@ -33,25 +33,25 @@ func (_m *UseCase) Create(ctx context.Context, input entity.User) (context.Conte
 	var r0 context.Context
 	var r1 error
 	var r2 entity.User
-	if rf, ok := ret.Get(0).(func(context.Context, entity.User) (context.Context, error, entity.User)); ok {
-		return rf(ctx, input)
+	if rf, ok := ret.Get(0).(func(context.Context, entity.User, *entity.AuthClaims) (context.Context, error, entity.User)); ok {
+		return rf(ctx, input, claims)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, entity.User) context.Context); ok {
-		r0 = rf(ctx, input)
+	if rf, ok := ret.Get(0).(func(context.Context, entity.User, *entity.AuthClaims) context.Context); ok {
+		r0 = rf(ctx, input, claims)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(context.Context)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, entity.User) error); ok {
-		r1 = rf(ctx, input)
+	if rf, ok := ret.Get(1).(func(context.Context, entity.User, *entity.AuthClaims) error); ok {
+		r1 = rf(ctx, input, claims)
 	} else {
 		r1 = ret.Error(1)
 	}
 
-	if rf, ok := ret.Get(2).(func(context.Context, entity.User) entity.User); ok {
-		r2 = rf(ctx, input)
+	if rf, ok := ret.Get(2).(func(context.Context, entity.User, *entity.AuthClaims) entity.User); ok {
+		r2 = rf(ctx, input, claims)
 	} else {
 		r2 = ret.Get(2).(entity.User)
 	}
@@ -67,13 +67,14 @@ type UseCase_Create_Call struct {
 // Create is a helper method to define mock.On call
 //   - ctx context.Context
 //   - input entity.User
-func (_e *UseCase_Expecter) Create(ctx interface{}, input interface{}) *UseCase_Create_Call {
-	return &UseCase_Create_Call{Call: _e.mock.On("Create", ctx, input)}
+//   - claims *entity.AuthClaims
+func (_e *UseCase_Expecter) Create(ctx interface{}, input interface{}, claims interface{}) *UseCase_Create_Call {
+	return &UseCase_Create_Call{Call: _e.mock.On("Create", ctx, input, claims)}
 }
 
-func (_c *UseCase_Create_Call) Run(run func(ctx context.Context, input entity.User)) *UseCase_Create_Call {
+func (_c *UseCase_Create_Call) Run(run func(ctx context.Context, input entity.User, claims *entity.AuthClaims)) *UseCase_Create_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(entity.User))
+		run(args[0].(context.Context), args[1].(entity.User), args[2].(*entity.AuthClaims))
 	})
 	return _c
 }
@@ -83,14 +84,14 @@ func (_c *UseCase_Create_Call) Return(_a0 context.Context, _a1 error, _a2 entity
 	return _c
 }
 
-func (_c *UseCase_Create_Call) RunAndReturn(run func(context.Context, entity.User) (context.Context, error, entity.User)) *UseCase_Create_Call {
+func (_c *UseCase_Create_Call) RunAndReturn(run func(context.Context, entity.User, *entity.AuthClaims) (context.Context, error, entity.User)) *UseCase_Create_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// Delete provides a mock function with given fields: ctx, id
-func (_m *UseCase) Delete(ctx context.Context, id int) (context.Context, error) {
-	ret := _m.Called(ctx, id)
+// Delete provides a mock function with given fields: ctx, id, claims
+func (_m *UseCase) Delete(ctx context.Context, id int, claims *entity.AuthClaims) (context.Context, error) {
+	ret := _m.Called(ctx, id, claims)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Delete")
@@ -98,19 +99,19 @@ func (_m *UseCase) Delete(ctx context.Context, id int) (context.Context, error) 
 
 	var r0 context.Context
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) (context.Context, error)); ok {
-		return rf(ctx, id)
+	if rf, ok := ret.Get(0).(func(context.Context, int, *entity.AuthClaims) (context.Context, error)); ok {
+		return rf(ctx, id, claims)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int) context.Context); ok {
-		r0 = rf(ctx, id)
+	if rf, ok := ret.Get(0).(func(context.Context, int, *entity.AuthClaims) context.Context); ok {
+		r0 = rf(ctx, id, claims)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(context.Context)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int) error); ok {
-		r1 = rf(ctx, id)
+	if rf, ok := ret.Get(1).(func(context.Context, int, *entity.AuthClaims) error); ok {
+		r1 = rf(ctx, id, claims)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -126,13 +127,14 @@ type UseCase_Delete_Call struct {
 // Delete is a helper method to define mock.On call
 //   - ctx context.Context
 //   - id int
-func (_e *UseCase_Expecter) Delete(ctx interface{}, id interface{}) *UseCase_Delete_Call {
-	return &UseCase_Delete_Call{Call: _e.mock.On("Delete", ctx, id)}
+//   - claims *entity.AuthClaims
+func (_e *UseCase_Expecter) Delete(ctx interface{}, id interface{}, claims interface{}) *UseCase_Delete_Call {
+	return &UseCase_Delete_Call{Call: _e.mock.On("Delete", ctx, id, claims)}
 }
 
-func (_c *UseCase_Delete_Call) Run(run func(ctx context.Context, id int)) *UseCase_Delete_Call {
+func (_c *UseCase_Delete_Call) Run(run func(ctx context.Context, id int, claims *entity.AuthClaims)) *UseCase_Delete_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int))
+		run(args[0].(context.Context), args[1].(int), args[2].(*entity.AuthClaims))
 	})
 	return _c
 }
@@ -142,7 +144,7 @@ func (_c *UseCase_Delete_Call) Return(_a0 context.Context, _a1 error) *UseCase_D
 	return _c
 }
 
-func (_c *UseCase_Delete_Call) RunAndReturn(run func(context.Context, int) (context.Context, error)) *UseCase_Delete_Call {
+func (_c *UseCase_Delete_Call) RunAndReturn(run func(context.Context, int, *entity.AuthClaims) (context.Context, error)) *UseCase_Delete_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -279,9 +281,9 @@ func (_c *UseCase_List_Call) RunAndReturn(run func(context.Context, entity.UserF
 	return _c
 }
 
-// Update provides a mock function with given fields: ctx, id, input
-func (_m *UseCase) Update(ctx context.Context, id int, input entity.User) (context.Context, error, entity.User) {
-	ret := _m.Called(ctx, id, input)
+// Update provides a mock function with given fields: ctx, id, input, claims
+func (_m *UseCase) Update(ctx context.Context, id int, input entity.User, claims *entity.AuthClaims) (context.Context, error, entity.User) {
+	ret := _m.Called(ctx, id, input, claims)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Update")
@@ -290,25 +292,25 @@ func (_m *UseCase) Update(ctx context.Context, id int, input entity.User) (conte
 	var r0 context.Context
 	var r1 error
 	var r2 entity.User
-	if rf, ok := ret.Get(0).(func(context.Context, int, entity.User) (context.Context, error, entity.User)); ok {
-		return rf(ctx, id, input)
+	if rf, ok := ret.Get(0).(func(context.Context, int, entity.User, *entity.AuthClaims) (context.Context, error, entity.User)); ok {
+		return rf(ctx, id, input, claims)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int, entity.User) context.Context); ok {
-		r0 = rf(ctx, id, input)
+	if rf, ok := ret.Get(0).(func(context.Context, int, entity.User, *entity.AuthClaims) context.Context); ok {
+		r0 = rf(ctx, id, input, claims)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(context.Context)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int, entity.User) error); ok {
-		r1 = rf(ctx, id, input)
+	if rf, ok := ret.Get(1).(func(context.Context, int, entity.User, *entity.AuthClaims) error); ok {
+		r1 = rf(ctx, id, input, claims)
 	} else {
 		r1 = ret.Error(1)
 	}
 
-	if rf, ok := ret.Get(2).(func(context.Context, int, entity.User) entity.User); ok {
-		r2 = rf(ctx, id, input)
+	if rf, ok := ret.Get(2).(func(context.Context, int, entity.User, *entity.AuthClaims) entity.User); ok {
+		r2 = rf(ctx, id, input, claims)
 	} else {
 		r2 = ret.Get(2).(entity.User)
 	}
@@ -325,13 +327,14 @@ type UseCase_Update_Call struct {
 //   - ctx context.Context
 //   - id int
 //   - input entity.User
-func (_e *UseCase_Expecter) Update(ctx interface{}, id interface{}, input interface{}) *UseCase_Update_Call {
-	return &UseCase_Update_Call{Call: _e.mock.On("Update", ctx, id, input)}
+//   - claims *entity.AuthClaims
+func (_e *UseCase_Expecter) Update(ctx interface{}, id interface{}, input interface{}, claims interface{}) *UseCase_Update_Call {
+	return &UseCase_Update_Call{Call: _e.mock.On("Update", ctx, id, input, claims)}
 }
 
-func (_c *UseCase_Update_Call) Run(run func(ctx context.Context, id int, input entity.User)) *UseCase_Update_Call {
+func (_c *UseCase_Update_Call) Run(run func(ctx context.Context, id int, input entity.User, claims *entity.AuthClaims)) *UseCase_Update_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int), args[2].(entity.User))
+		run(args[0].(context.Context), args[1].(int), args[2].(entity.User), args[3].(*entity.AuthClaims))
 	})
 	return _c
 }
@@ -341,7 +344,7 @@ func (_c *UseCase_Update_Call) Return(_a0 context.Context, _a1 error, _a2 entity
 	return _c
 }
 
-func (_c *UseCase_Update_Call) RunAndReturn(run func(context.Context, int, entity.User) (context.Context, error, entity.User)) *UseCase_Update_Call {
+func (_c *UseCase_Update_Call) RunAndReturn(run func(context.Context, int, entity.User, *entity.AuthClaims) (context.Context, error, entity.User)) *UseCase_Update_Call {
 	_c.Call.Return(run)
 	return _c
 }

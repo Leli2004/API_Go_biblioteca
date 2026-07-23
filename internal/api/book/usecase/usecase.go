@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+
 	"github.com/Leli2004/API_Go_biblioteca/internal/api/book"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
@@ -35,14 +36,14 @@ func (u *BookUC) Get(ctx context.Context, id int) (context.Context, error, entit
 	return u.getUC.Execute(ctx, id)
 }
 
-func (u *BookUC) Create(ctx context.Context, input entity.Book) (context.Context, error, entity.Book) {
-	return u.createUC.Execute(ctx, input)
+func (u *BookUC) Create(ctx context.Context, input entity.Book, claims *entity.AuthClaims) (context.Context, error, entity.Book) {
+	return u.createUC.Execute(ctx, input, claims)
 }
 
-func (u *BookUC) Update(ctx context.Context, id int, input entity.Book) (context.Context, error, entity.Book) {
-	return u.updateUC.Execute(ctx, id, input)
+func (u *BookUC) Update(ctx context.Context, id int, input entity.Book, claims *entity.AuthClaims) (context.Context, error, entity.Book) {
+	return u.updateUC.Execute(ctx, id, input, claims)
 }
 
-func (u *BookUC) Delete(ctx context.Context, id int) (context.Context, error) {
-	return u.deleteUC.Execute(ctx, id)
+func (u *BookUC) Delete(ctx context.Context, id int, claims *entity.AuthClaims) (context.Context, error) {
+	return u.deleteUC.Execute(ctx, id, claims)
 }

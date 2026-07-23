@@ -22,6 +22,7 @@ func Test_List_Handler(t *testing.T) {
 	assert.NoError(t, h.List()(e.NewContext(req, rec)))
 	assert.Equal(t, http.StatusOK, rec.Code)
 }
+
 func Test_Get_Handler_InvalidID(t *testing.T) {
 	e := echo.New()
 	u := mm.NewUseCase(t)

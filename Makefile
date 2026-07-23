@@ -28,6 +28,7 @@ help:
 	@echo "  make clean         - Remove arquivos gerados"
 	@echo "  make migrate-all   - Executa migrate completo"
 	@echo "  make migrate-down  - Remove a última migration aplicada"
+	@echo "  migrate-seed		- Executa seeds"
 	@echo "  make unit-test-api - Executa os testes unitários de ./internal/api/"
 
 #****************************************************#

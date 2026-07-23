@@ -36,22 +36,35 @@ func Test_Get_Repository(t *testing.T) {
 		setup := setupRepository(t)
 		repository := NewRepository()
 		now := time.Now().UTC().Format(time.RFC3339)
-		expected := entity.User{Name: "Maria", Email: "maria@example.com", PasswordHash: "hash", Phone: strPtr("11999999999"), Role: "member", Active: boolPtr(true)}
+		expected := entity.User{
+			Name:         "Maria",
+			Email:        "maria@example.com",
+			Username:     "maria",
+			PasswordHash: "hash",
+			Phone:        strPtr("11999999999"),
+			Role:         "member",
+			Active:       boolPtr(true)}
 		expected.Id = 1
-		rows := sqlmock.NewRows([]string{"id", "name", "email", "password_hash", "phone", "role", "active", "created_at", "updated_at"}).AddRow(expected.Id,
-			expected.Name,
-			expected.Email,
-			expected.PasswordHash,
-			expected.Phone,
-			expected.Role,
-			expected.Active,
-			now,
-			now)
+
+		rows := sqlmock.NewRows([]string{"id", "name", "email", "username", "password_hash", "phone", "role", "active", "created_at", "updated_at"}).
+			AddRow(expected.Id,
+				expected.Name,
+				expected.Email,
+				expected.Username,
+				expected.PasswordHash,
+				expected.Phone,
+				expected.Role,
+				expected.Active,
+				now,
+				now)
+
 		setup.sqlMock.ExpectBegin()
 		tx, err := setup.db.Beginx()
 		assert.NoError(t, err)
+
 		setup.sqlMock.ExpectQuery(regexp.QuoteMeta(getSql)).WithArgs(expected.Id).WillReturnRows(rows)
 		returnedCtx, err, result := repository.Get(setup.ctx, tx, expected.Id)
+
 		assert.NoError(t, err)
 		assert.NotNil(t, returnedCtx)
 		assert.Equal(t, setup.ctx, returnedCtx)
@@ -87,24 +100,41 @@ func Test_Create_Repository(t *testing.T) {
 	t.Run("Happy Path - Cria user", func(t *testing.T) {
 		setup := setupRepository(t)
 		repository := NewRepository()
-		input := entity.User{Name: "Maria", Email: "maria@example.com", PasswordHash: "hash", Phone: strPtr("11999999999"), Role: "member", Active: boolPtr(true)}
+
+		input := entity.User{
+			Name:         "Maria",
+			Email:        "maria@example.com",
+			Username:     "maria",
+			PasswordHash: "hash",
+			Phone:        strPtr("11999999999"),
+			Role:         "member",
+			Active:       boolPtr(true),
+		}
+
 		expected := input
 		expected.Id = 1
 		now := time.Now().UTC().Format(time.RFC3339)
-		rows := sqlmock.NewRows([]string{"id", "name", "email", "password_hash", "phone", "role", "active", "created_at", "updated_at"}).AddRow(expected.Id,
-			expected.Name,
-			expected.Email,
-			expected.PasswordHash,
-			expected.Phone,
-			expected.Role,
-			expected.Active,
-			now,
-			now)
+
+		rows := sqlmock.NewRows([]string{"id", "name", "email", "password_hash", "phone", "role", "active", "created_at", "updated_at", "username"}).
+			AddRow(expected.Id,
+				expected.Name,
+				expected.Email,
+				expected.PasswordHash,
+				expected.Phone,
+				expected.Role,
+				expected.Active,
+				now,
+				now,
+				expected.Username,
+			)
+
 		setup.sqlMock.ExpectBegin()
 		tx, err := setup.db.Beginx()
+
 		assert.NoError(t, err)
-		setup.sqlMock.ExpectQuery(regexp.QuoteMeta(createSql)).WithArgs(input.Name, input.Email, input.PasswordHash, input.Phone, input.Role, input.Active).WillReturnRows(rows)
+		setup.sqlMock.ExpectQuery(regexp.QuoteMeta(createSql)).WithArgs(input.Name, input.Email, input.PasswordHash, input.Phone, input.Role, input.Active, input.Username).WillReturnRows(rows)
 		returnedCtx, err, result := repository.Create(setup.ctx, tx, input)
+
 		assert.NoError(t, err)
 		assert.Equal(t, setup.ctx, returnedCtx)
 		assert.Equal(t, expected.Id, result.Id)
@@ -125,7 +155,7 @@ func Test_Create_Repository(t *testing.T) {
 		setup.sqlMock.ExpectBegin()
 		tx, err := setup.db.Beginx()
 		assert.NoError(t, err)
-		setup.sqlMock.ExpectQuery(regexp.QuoteMeta(createSql)).WithArgs(input.Name, input.Email, input.PasswordHash, input.Phone, input.Role, input.Active).WillReturnError(expectedError)
+		setup.sqlMock.ExpectQuery(regexp.QuoteMeta(createSql)).WithArgs(input.Name, input.Email, input.PasswordHash, input.Phone, input.Role, input.Active, input.Username).WillReturnError(expectedError)
 		returnedCtx, err, result := repository.Create(setup.ctx, tx, input)
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, expectedError)
@@ -141,24 +171,39 @@ func Test_Update_Repository(t *testing.T) {
 		setup := setupRepository(t)
 		repository := NewRepository()
 		id := 1
-		input := entity.User{Name: "Maria", Email: "maria@example.com", PasswordHash: "hash", Phone: strPtr("11999999999"), Role: "member", Active: boolPtr(true)}
+		input := entity.User{
+			Name:         "Maria",
+			Email:        "maria@example.com",
+			Username:     "maria",
+			PasswordHash: "hash",
+			Phone:        strPtr("11999999999"),
+			Role:         "member",
+			Active:       boolPtr(true),
+		}
+
 		expected := input
 		expected.Id = id
 		now := time.Now().UTC().Format(time.RFC3339)
-		rows := sqlmock.NewRows([]string{"id", "name", "email", "password_hash", "phone", "role", "active", "created_at", "updated_at"}).AddRow(expected.Id,
-			expected.Name,
-			expected.Email,
-			expected.PasswordHash,
-			expected.Phone,
-			expected.Role,
-			expected.Active,
-			now,
-			now)
+
+		rows := sqlmock.NewRows([]string{"id", "name", "email", "username", "password_hash", "phone", "role", "active", "created_at", "updated_at"}).
+			AddRow(expected.Id,
+				expected.Name,
+				expected.Email,
+				expected.Username,
+				expected.PasswordHash,
+				expected.Phone,
+				expected.Role,
+				expected.Active,
+				now,
+				now)
+
 		setup.sqlMock.ExpectBegin()
 		tx, err := setup.db.Beginx()
 		assert.NoError(t, err)
-		setup.sqlMock.ExpectQuery(regexp.QuoteMeta(updateSql)).WithArgs(input.Name, input.Email, input.PasswordHash, input.Phone, input.Role, input.Active, id).WillReturnRows(rows)
+
+		setup.sqlMock.ExpectQuery(regexp.QuoteMeta(updateSql)).WithArgs(input.Name, input.Email, input.Username, input.PasswordHash, input.Phone, input.Role, input.Active, id).WillReturnRows(rows)
 		returnedCtx, err, result := repository.Update(setup.ctx, tx, id, input)
+
 		assert.NoError(t, err)
 		assert.Equal(t, setup.ctx, returnedCtx)
 		assert.Equal(t, expected.Id, result.Id)
@@ -175,12 +220,12 @@ func Test_Update_Repository(t *testing.T) {
 		setup := setupRepository(t)
 		repository := NewRepository()
 		id := 1
-		input := entity.User{Name: "Maria", Email: "maria@example.com", PasswordHash: "hash", Phone: strPtr("11999999999"), Role: "member", Active: boolPtr(true)}
+		input := entity.User{Name: "Maria", Email: "maria@example.com", Username: "maria", PasswordHash: "hash", Phone: strPtr("11999999999"), Role: "member", Active: boolPtr(true)}
 		expectedError := errors.New("erro ao atualizar")
 		setup.sqlMock.ExpectBegin()
 		tx, err := setup.db.Beginx()
 		assert.NoError(t, err)
-		setup.sqlMock.ExpectQuery(regexp.QuoteMeta(updateSql)).WithArgs(input.Name, input.Email, input.PasswordHash, input.Phone, input.Role, input.Active, id).WillReturnError(expectedError)
+		setup.sqlMock.ExpectQuery(regexp.QuoteMeta(updateSql)).WithArgs(input.Name, input.Email, input.Username, input.PasswordHash, input.Phone, input.Role, input.Active, id).WillReturnError(expectedError)
 		returnedCtx, err, result := repository.Update(setup.ctx, tx, id, input)
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, expectedError)
@@ -196,23 +241,29 @@ func Test_Delete_Repository(t *testing.T) {
 		setup := setupRepository(t)
 		repository := NewRepository()
 		id := 1
-		expected := entity.User{Name: "Maria", Email: "maria@example.com", PasswordHash: "hash", Phone: strPtr("11999999999"), Role: "member", Active: boolPtr(true)}
+		expected := entity.User{Name: "Maria", Email: "maria@example.com", Username: "maria", PasswordHash: "hash", Phone: strPtr("11999999999"), Role: "member", Active: boolPtr(true)}
 		expected.Id = id
 		now := time.Now().UTC().Format(time.RFC3339)
-		rows := sqlmock.NewRows([]string{"id", "name", "email", "password_hash", "phone", "role", "active", "created_at", "updated_at"}).AddRow(expected.Id,
-			expected.Name,
-			expected.Email,
-			expected.PasswordHash,
-			expected.Phone,
-			expected.Role,
-			expected.Active,
-			now,
-			now)
+
+		rows := sqlmock.NewRows([]string{"id", "name", "email", "username", "password_hash", "phone", "role", "active", "created_at", "updated_at"}).
+			AddRow(expected.Id,
+				expected.Name,
+				expected.Email,
+				expected.Username,
+				expected.PasswordHash,
+				expected.Phone,
+				expected.Role,
+				expected.Active,
+				now,
+				now)
+
 		setup.sqlMock.ExpectBegin()
 		tx, err := setup.db.Beginx()
 		assert.NoError(t, err)
+
 		setup.sqlMock.ExpectQuery(regexp.QuoteMeta(deleteSql)).WithArgs(id).WillReturnRows(rows)
 		returnedCtx, err := repository.Delete(setup.ctx, tx, id)
+
 		assert.NoError(t, err)
 		assert.Equal(t, setup.ctx, returnedCtx)
 		assert.NoError(t, setup.sqlMock.ExpectationsWereMet())
@@ -242,22 +293,29 @@ func Test_List_Repository(t *testing.T) {
 		repository := NewRepository()
 		input := entity.UserFilters{Offset: 0, Limit: 10}
 		now := time.Now().UTC().Format(time.RFC3339)
-		expected := entity.User{Name: "Maria", Email: "maria@example.com", PasswordHash: "hash", Phone: strPtr("11999999999"), Role: "member", Active: boolPtr(true)}
+
+		expected := entity.User{Name: "Maria", Email: "maria@example.com", Username: "maria", PasswordHash: "hash", Phone: strPtr("11999999999"), Role: "member", Active: boolPtr(true)}
 		expected.Id = 1
-		rows := sqlmock.NewRows([]string{"id", "name", "email", "password_hash", "phone", "role", "active", "created_at", "updated_at"}).AddRow(expected.Id,
-			expected.Name,
-			expected.Email,
-			expected.PasswordHash,
-			expected.Phone,
-			expected.Role,
-			expected.Active,
-			now,
-			now)
+
+		rows := sqlmock.NewRows([]string{"id", "name", "email", "username", "password_hash", "phone", "role", "active", "created_at", "updated_at"}).
+			AddRow(expected.Id,
+				expected.Name,
+				expected.Email,
+				expected.Username,
+				expected.PasswordHash,
+				expected.Phone,
+				expected.Role,
+				expected.Active,
+				now,
+				now)
+
 		setup.sqlMock.ExpectBegin()
 		tx, err := setup.db.Beginx()
 		assert.NoError(t, err)
+
 		setup.sqlMock.ExpectQuery(regexp.QuoteMeta(listSql)).WithArgs(input.Offset, input.Limit).WillReturnRows(rows)
 		returnedCtx, err, result := repository.List(setup.ctx, tx, input)
+
 		assert.NoError(t, err)
 		assert.Equal(t, setup.ctx, returnedCtx)
 		assert.Equal(t, input.Offset, result.Offset)
@@ -271,12 +329,15 @@ func Test_List_Repository(t *testing.T) {
 		setup := setupRepository(t)
 		repository := NewRepository()
 		input := entity.UserFilters{Offset: 0, Limit: 10}
-		rows := sqlmock.NewRows([]string{"id", "name", "email", "password_hash", "phone", "role", "active", "created_at", "updated_at"})
+		rows := sqlmock.NewRows([]string{"id", "name", "email", "username", "password_hash", "phone", "role", "active", "created_at", "updated_at"})
+		
 		setup.sqlMock.ExpectBegin()
 		tx, err := setup.db.Beginx()
 		assert.NoError(t, err)
+
 		setup.sqlMock.ExpectQuery(regexp.QuoteMeta(listSql)).WithArgs(input.Offset, input.Limit).WillReturnRows(rows)
 		returnedCtx, err, result := repository.List(setup.ctx, tx, input)
+		
 		assert.NoError(t, err)
 		assert.Equal(t, setup.ctx, returnedCtx)
 		assert.Equal(t, 0, result.Limit)
