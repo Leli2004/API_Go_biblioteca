@@ -103,7 +103,7 @@ func main() {
 
 	// Book
 	bookRepo := bookRepository.NewRepository()
-	bookUC := bookUseCase.NewUseCase(dbSqlx, bookRepo)
+	bookUC := bookUseCase.NewUseCase(dbSqlx, bookRepo, redisClient)
 	bookHandler := bookHttp.NewHandler(bookUC)
 	bookHttp.MapRoutes(e.Group("/book", jwtMiddleware.Handler()), bookHandler)
 

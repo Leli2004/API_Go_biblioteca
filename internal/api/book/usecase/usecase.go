@@ -6,6 +6,7 @@ import (
 	"github.com/Leli2004/API_Go_biblioteca/internal/api/book"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
+	"github.com/redis/go-redis/v9"
 )
 
 type BookUC struct {
@@ -15,16 +16,18 @@ type BookUC struct {
 	updateUC UpdateUC
 	deleteUC DeleteUC
 	repo     book.Repository
+	redisCli *redis.Client
 }
 
-func NewUseCase(db *sqlx.DB, repo book.Repository) *BookUC {
+func NewUseCase(db *sqlx.DB, repo book.Repository, redisCli *redis.Client) *BookUC {
 	return &BookUC{
-		listUC:   NewListUC(db, repo),
-		getUC:    NewGetUC(db, repo),
+		listUC:   NewListUC(db, repo, redisCli),
+		getUC:    NewGetUC(db, repo, redisCli),
 		createUC: NewCreateUC(db, repo),
 		updateUC: NewUpdateUC(db, repo),
 		deleteUC: NewDeleteUC(db, repo),
 		repo:     repo,
+		redisCli: redisCli,
 	}
 }
 

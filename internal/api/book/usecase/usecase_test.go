@@ -8,7 +8,9 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	mm "github.com/Leli2004/API_Go_biblioteca/internal/api/book/mocks"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
+	"github.com/alicebob/miniredis/v2"
 	"github.com/jmoiron/sqlx"
+	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -19,6 +21,7 @@ type useCaseSetup struct {
 	sqlMock sqlmock.Sqlmock
 	db      *sqlx.DB
 	ctx     context.Context
+	redis   *miniredis.Miniredis
 }
 
 func setup(t *testing.T) useCaseSetup {
@@ -26,8 +29,17 @@ func setup(t *testing.T) useCaseSetup {
 	assert.NoError(t, e)
 	db := sqlx.NewDb(s, "sqlmock")
 	r := mm.NewRepository(t)
-	t.Cleanup(func() { _ = db.Close() })
-	return useCaseSetup{NewUseCase(db, r), r, m, db, context.Background()}
+	miniRedis := miniredis.RunT(t)
+	redisCli := redis.NewClient(&redis.Options{
+		Addr: miniRedis.Addr(),
+	})
+
+	t.Cleanup(func() {
+		_ = db.Close()
+		_ = redisCli.Close()
+	})
+
+	return useCaseSetup{NewUseCase(db, r, redisCli), r, m, db, context.Background(), miniRedis}
 }
 func Test_Get_UseCase(t *testing.T) {
 	t.Run("Happy Path - Retorna registro", func(t *testing.T) {
