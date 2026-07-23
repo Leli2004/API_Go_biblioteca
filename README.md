@@ -11,16 +11,18 @@ A API tem como objetivo controlar livros, autores, editoras, usuários, emprést
 - Go v1.26
 - PostgreSQL v16.14
 - Docker v29.6
+- Redis v7-alpine
 - Make
 
 ---
 
 ## Como executar o projeto
 
-### 1. Subir o banco PostgreSQL
+### 1. Subir containeres
 
 ```bash
 make db-up
+make redis-up
 ````
 
 O PostgreSQL será iniciado na porta `5433`.

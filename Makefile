@@ -8,6 +8,9 @@ DB_USER=postgres
 DB_PASSWORD=1234
 DB_NAME=postgres
 POSTGRES_VERSION=16.14
+REDIS_CONTAINER=redis
+REDIS_PORT=6379
+REDIS_VERSION=7-alpine
 
 DATABASE_URL=postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable
 
@@ -30,9 +33,11 @@ help:
 	@echo "  make migrate-down  - Remove a última migration aplicada"
 	@echo "  migrate-seed		- Executa seeds"
 	@echo "  make unit-test-api - Executa os testes unitários de ./internal/api/"
+	@echo "  make redis-up		- Sobe o container do Redis"
+	@echo "  make redis-down	- Remove o container do Redis"
 
 #****************************************************#
-# Database
+# Database Postgres
 
 db-up:
 	docker run -d \
@@ -52,6 +57,17 @@ db-shell:
 
 db-create:
 	docker exec -it $(DB_CONTAINER) createdb -U $(DB_USER) $(DB_NAME)
+
+#****************************************************#
+# Redis
+redis-up:
+	docker run -d \
+		--name $(REDIS_CONTAINER) \
+		-p $(REDIS_PORT):6379 \
+		redis:$(REDIS_VERSION)
+
+redis-down:
+	docker rm -f $(REDIS_CONTAINER) 
 
 #****************************************************#
 # Migrate

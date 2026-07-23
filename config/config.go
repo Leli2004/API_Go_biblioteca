@@ -10,9 +10,10 @@ import (
 var cfg *Config
 
 type Config struct {
-	API  APIConfig  `mapstructure:"api"`
-	DB   DBConfig   `mapstructure:"database"`
-	Auth AuthConfig `mapstructure:"auth"`
+	API   APIConfig   `mapstructure:"api"`
+	DB    DBConfig    `mapstructure:"database"`
+	Redis RedisConfig `mapstructure:"redis"`
+	Auth  AuthConfig  `mapstructure:"auth"`
 }
 
 type APIConfig struct {
@@ -25,6 +26,13 @@ type DBConfig struct {
 	User     string `mapstructure:"user"`
 	Pass     string `mapstructure:"pass"`
 	Database string `mapstructure:"name"`
+}
+
+type RedisConfig struct {
+	Host     string `mapstructure:"host"`
+	Port     string `mapstructure:"port"`
+	Password string `mapstructure:"password"`
+	Database int    `mapstructure:"database"`
 }
 
 type AuthConfig struct {
@@ -57,6 +65,14 @@ const (
 
 	CfgJWTIssuerValue      = "biblioteca-api"
 	CfgJWTExpireHoursValue = 24
+
+	CfgRedisHost     = "redis.host"
+	CfgRedisPort     = "redis.port"
+	CfgRedisPassword = "redis.password"
+	CfgRedisDatabase = "redis.database"
+
+	CfgRedisHostValue = "localhost"
+	CfgRedisPortValue = "6379"
 )
 
 func Load() error {
@@ -70,6 +86,10 @@ func Load() error {
 
 	viper.SetDefault(CfgJWTIssuer, CfgJWTIssuerValue)
 	viper.SetDefault(CfgJWTExpireHours, CfgJWTExpireHoursValue)
+
+	viper.SetDefault(CfgRedisHost, CfgRedisHostValue)
+	viper.SetDefault(CfgRedisPort, CfgRedisPortValue)
+	viper.SetDefault(CfgRedisDatabase, 0)
 
 	viper.SetEnvPrefix("")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
@@ -122,4 +142,8 @@ func GetJWTExpiration() time.Duration {
 		expireHours = CfgJWTExpireHoursValue
 	}
 	return time.Duration(expireHours) * time.Hour
+}
+
+func GetRedis() RedisConfig {
+	return cfg.Redis
 }
