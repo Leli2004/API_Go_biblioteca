@@ -20,7 +20,11 @@ func NewUpdateUC(db *sqlx.DB, repo user.Repository) UpdateUC {
 	return UpdateUC{db: db, repo: repo}
 }
 
-func (u *UpdateUC) Execute(ctx context.Context, id int, input entity.User) (returnedCtx context.Context, err error, result entity.User) {
+func (u *UpdateUC) Execute(ctx context.Context, id int, input entity.User, claims *entity.AuthClaims) (returnedCtx context.Context, err error, result entity.User) {
+	if err := security.ValidateRoles(claims, entity.RoleAdmin); err != nil {
+		return ctx, err, result
+	}
+
 	tx, err := helpers.OpenTransaction(ctx, u.db)
 	if err != nil {
 		return ctx, err, result

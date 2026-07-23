@@ -2,13 +2,14 @@ package usecase
 
 import (
 	"context"
+	"testing"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	mm "github.com/Leli2004/API_Go_biblioteca/internal/api/loan/mocks"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"testing"
 )
 
 func setupLoan(t *testing.T) (*LoanUC, *mm.Repository, sqlmock.Sqlmock, context.Context) {
@@ -48,6 +49,7 @@ func Test_Return_UseCase(t *testing.T) {
 	r.On("Get", mock.Anything, mock.Anything, 1).Return(c, nil, ln).Once()
 	r.On("Update", mock.Anything, mock.Anything, 1, mock.MatchedBy(func(v entity.Loan) bool { return v.Status == "returned" && v.ReturnedAt != nil })).Return(c, nil, ln).Once()
 	m.ExpectCommit()
-	_, e, _ := u.Return(c, 1, nil)
+	claims := &entity.AuthClaims{Role: entity.RoleAdmin}
+	_, e, _ := u.Return(c, 1, nil, claims)
 	assert.NoError(t, e)
 }

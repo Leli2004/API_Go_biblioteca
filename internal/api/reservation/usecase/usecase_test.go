@@ -40,6 +40,7 @@ func Test_Create_UseCase(t *testing.T) {
 		expected := entity.Reservation{Id: 10, UserId: 1, BookId: 2, Status: entity.ReservationStatusWaiting}
 		position := 3
 		expected.Position = &position
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
 
 		s.sqlMock.ExpectBegin()
 		s.repo.On("GetActiveByUserAndBook", mock.Anything, mock.Anything, 1, 2).
@@ -51,7 +52,7 @@ func Test_Create_UseCase(t *testing.T) {
 		})).Return(s.ctx, nil, expected).Once()
 		s.sqlMock.ExpectCommit()
 
-		ctx, err, result := s.useCase.Create(s.ctx, input)
+		ctx, err, result := s.useCase.Create(s.ctx, input, claims)
 
 		assert.NoError(t, err)
 		assert.Equal(t, s.ctx, ctx)
@@ -64,6 +65,7 @@ func Test_Create_UseCase(t *testing.T) {
 		position := 99
 		input := entity.Reservation{UserId: 1, BookId: 2, Status: entity.ReservationStatusAvailable, Position: &position}
 		expected := entity.Reservation{Id: 11, UserId: 1, BookId: 2, Status: entity.ReservationStatusAvailable}
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
 
 		s.sqlMock.ExpectBegin()
 		s.repo.On("GetActiveByUserAndBook", mock.Anything, mock.Anything, 1, 2).
@@ -73,7 +75,7 @@ func Test_Create_UseCase(t *testing.T) {
 		})).Return(s.ctx, nil, expected).Once()
 		s.sqlMock.ExpectCommit()
 
-		_, err, result := s.useCase.Create(s.ctx, input)
+		_, err, result := s.useCase.Create(s.ctx, input, claims)
 
 		assert.NoError(t, err)
 		assert.Equal(t, expected, result)
@@ -85,8 +87,9 @@ func Test_Create_UseCase(t *testing.T) {
 		s := setupUseCase(t)
 		s.sqlMock.ExpectBegin()
 		s.sqlMock.ExpectRollback()
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
 
-		_, err, result := s.useCase.Create(s.ctx, entity.Reservation{})
+		_, err, result := s.useCase.Create(s.ctx, entity.Reservation{}, claims)
 
 		assert.Error(t, err)
 		assert.Equal(t, entity.Reservation{}, result)
@@ -103,8 +106,9 @@ func Test_Create_UseCase(t *testing.T) {
 		s.repo.On("GetActiveByUserAndBook", mock.Anything, mock.Anything, 1, 2).
 			Return(s.ctx, nil, active).Once()
 		s.sqlMock.ExpectRollback()
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
 
-		_, err, result := s.useCase.Create(s.ctx, input)
+		_, err, result := s.useCase.Create(s.ctx, input, claims)
 
 		assert.EqualError(t, err, "user already has an active reservation for this book")
 		assert.Equal(t, entity.Reservation{}, result)
@@ -116,13 +120,14 @@ func Test_Create_UseCase(t *testing.T) {
 		s := setupUseCase(t)
 		expectedError := errors.New("database error")
 		input := entity.Reservation{UserId: 1, BookId: 2}
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
 
 		s.sqlMock.ExpectBegin()
 		s.repo.On("GetActiveByUserAndBook", mock.Anything, mock.Anything, 1, 2).
 			Return(s.ctx, expectedError, entity.Reservation{}).Once()
 		s.sqlMock.ExpectRollback()
 
-		_, err, _ := s.useCase.Create(s.ctx, input)
+		_, err, _ := s.useCase.Create(s.ctx, input, claims)
 
 		assert.ErrorIs(t, err, expectedError)
 		assert.NoError(t, s.sqlMock.ExpectationsWereMet())
@@ -132,6 +137,7 @@ func Test_Create_UseCase(t *testing.T) {
 		s := setupUseCase(t)
 		expectedError := errors.New("position error")
 		input := entity.Reservation{UserId: 1, BookId: 2}
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
 
 		s.sqlMock.ExpectBegin()
 		s.repo.On("GetActiveByUserAndBook", mock.Anything, mock.Anything, 1, 2).
@@ -140,7 +146,7 @@ func Test_Create_UseCase(t *testing.T) {
 			Return(s.ctx, expectedError, 0).Once()
 		s.sqlMock.ExpectRollback()
 
-		_, err, _ := s.useCase.Create(s.ctx, input)
+		_, err, _ := s.useCase.Create(s.ctx, input, claims)
 
 		assert.ErrorIs(t, err, expectedError)
 		assert.NoError(t, s.sqlMock.ExpectationsWereMet())
@@ -150,6 +156,7 @@ func Test_Create_UseCase(t *testing.T) {
 		s := setupUseCase(t)
 		expectedError := errors.New("create error")
 		input := entity.Reservation{UserId: 1, BookId: 2}
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
 
 		s.sqlMock.ExpectBegin()
 		s.repo.On("GetActiveByUserAndBook", mock.Anything, mock.Anything, 1, 2).
@@ -160,7 +167,7 @@ func Test_Create_UseCase(t *testing.T) {
 			Return(s.ctx, expectedError, entity.Reservation{}).Once()
 		s.sqlMock.ExpectRollback()
 
-		_, err, _ := s.useCase.Create(s.ctx, input)
+		_, err, _ := s.useCase.Create(s.ctx, input, claims)
 
 		assert.ErrorIs(t, err, expectedError)
 		assert.NoError(t, s.sqlMock.ExpectationsWereMet())

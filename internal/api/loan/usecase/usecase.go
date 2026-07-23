@@ -28,12 +28,12 @@ func NewUseCase(db *sqlx.DB, repo loan.Repository) *LoanUC {
 	}
 }
 
-func (u *LoanUC) Create(ctx context.Context, input entity.Loan) (context.Context, error, entity.Loan) {
-	return u.createUC.Execute(ctx, input)
+func (u *LoanUC) Create(ctx context.Context, input entity.Loan, claims *entity.AuthClaims) (context.Context, error, entity.Loan) {
+	return u.createUC.Execute(ctx, input, claims)
 }
 
-func (u *LoanUC) Return(ctx context.Context, loanId int, returnedAt *string) (context.Context, error, entity.Loan) {
-	return u.returnUC.Execute(ctx, loanId, returnedAt)
+func (u *LoanUC) Return(ctx context.Context, loanId int, returnedAt *string, claims *entity.AuthClaims) (context.Context, error, entity.Loan) {
+	return u.returnUC.Execute(ctx, loanId, returnedAt, claims)
 }
 
 func (u *LoanUC) List(ctx context.Context, input entity.LoanFilters) (context.Context, error, entity.LoanList) {
@@ -44,6 +44,6 @@ func (u *LoanUC) Get(ctx context.Context, id int) (context.Context, error, entit
 	return u.getUC.Execute(ctx, id)
 }
 
-func (u *LoanUC) Delete(ctx context.Context, id int) (context.Context, error, entity.Loan) {
-	return u.deleteUC.Execute(ctx, id)
+func (u *LoanUC) Delete(ctx context.Context, id int, claims *entity.AuthClaims) (context.Context, error, entity.Loan) {
+	return u.deleteUC.Execute(ctx, id, claims)
 }

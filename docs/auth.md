@@ -1,157 +1,84 @@
+# Autenticação e Autorização
 
-# Autenticação JWT
+A API utiliza JWT para autenticação e bcrypt para armazenamento seguro de senhas.
 
-## Visão Geral
-
-O sistema utiliza autenticação baseada em **JWT (JSON Web Token)**.
-
-Após realizar o login com **username** e **password**, a API gera automaticamente um token JWT com validade de **24 horas**. Esse token deve ser enviado em todas as requisições para rotas protegidas.
-
----
-
-# Fluxo de Autenticação
-
-```text
-Usuário
-    │
-    ▼
-POST /auth/login
-    │
-    ▼
-Validação de username e senha
-    │
-    ▼
-Geração do JWT
-    │
-    ▼
-Retorno do token
-    │
-    ▼
-Authorization: Bearer <token>
-    │
-    ▼
-Rotas protegidas
-```
-
----
-
-# Cadastro de Usuário
-
-Durante o cadastro:
-
-- A senha é recebida em texto puro.
-- A senha é criptografada utilizando **bcrypt**.
-- Apenas o **password_hash** é armazenado no banco de dados.
-- A senha nunca é retornada pela API.
-
----
-
-# Login
-
-## Endpoint
+## Login
 
 ```http
 POST /auth/login
+Content-Type: application/json
 ```
-
-### Request
 
 ```json
 {
-    "username": "admin",
-    "password": "senha123"
+  "username": "admin",
+  "password": "senha123"
 }
 ```
 
-### Response
+Resposta:
 
 ```json
 {
-    "token": "<jwt>",
-    "token_type": "Bearer",
-    "expires_in": 86400,
-    "user": {
-        "id": 1,
-        "name": "Administrador",
-        "username": "admin",
-        "email": "admin@biblioteca.com",
-        "role": "admin"
-    }
-}
-```
-
----
-
-# Usuário Autenticado
-
-## Endpoint
-
-```http
-GET /auth/me
-```
-
-### Header obrigatório
-
-```http
-Authorization: Bearer <jwt>
-```
-
-### Response
-
-```json
-{
+  "token": "<jwt>",
+  "token_type": "Bearer",
+  "expires_in": 86400,
+  "user": {
     "id": 1,
     "name": "Administrador",
     "username": "admin",
     "email": "admin@biblioteca.com",
     "role": "admin"
+  }
 }
 ```
 
----
+O token possui validade de 24 horas e é assinado com HS256.
 
-# Header de Autenticação
+## Uso do token
 
-Todas as rotas protegidas devem receber o seguinte header:
+Envie o token em todas as rotas protegidas:
 
 ```http
 Authorization: Bearer <jwt>
 ```
 
-Caso o token esteja ausente, inválido ou expirado, a API retornará:
+Tokens ausentes, inválidos ou expirados resultam em `401 Unauthorized`.
+
+## Usuário autenticado
 
 ```http
-401 Unauthorized
+GET /auth/me
+Authorization: Bearer <jwt>
 ```
 
----
+Retorna os dados do usuário autenticado.
 
-# Perfis
+## Perfis
 
-O sistema possui dois perfis de usuário:
+O sistema possui os perfis:
 
-| Perfil | Descrição   |
-|---------|------------------------- |
-| `admin` | Administrador do sistema |
-| `user` | Usuário padrão  |
+- `admin`
+- `user`
 
----
+A autorização por perfil é validada pela função `security.ValidateRoles`, que recebe as claims do JWT e um ou mais roles permitidos.
 
-# Expiração do Token
+Exemplo:
 
-- Algoritmo: **HS256**
-- Validade: **24 horas**
-- Após a expiração, o usuário deverá realizar um novo login para obter um novo token.
+```go
+security.ValidateRoles(
+    claims,
+    entity.RoleAdmin,
+)
+```
 
----
+Quando o usuário não possui um role permitido, a ação é recusada.
 
-# Segurança
+## Segurança
 
-- Senhas armazenadas utilizando **bcrypt**.
-- Apenas o **password_hash** é persistido no banco de dados.
-- O JWT é assinado utilizando **HS256**.
-- O middleware valida automaticamente a assinatura e a expiração do token.
-- Senhas e hashes nunca são retornados nas respostas da API.
+- Senhas são armazenadas com bcrypt.
+- O hash da senha não é retornado pela API.
+- O middleware valida assinatura e expiração do JWT.
 - Usuários inativos não podem realizar login.
-
----
+- O username é único.
+- O email é validado para evitar duplicidade.

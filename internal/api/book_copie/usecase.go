@@ -10,7 +10,7 @@ import (
 type UseCase interface {
 	List(ctx context.Context, input entity.BookCopyFilters) (context.Context, error, entity.BookCopyList)
 	Get(ctx context.Context, id int) (context.Context, error, entity.BookCopy)
-	Create(ctx context.Context, input entity.BookCopy) (context.Context, error, entity.BookCopy)
-	Update(ctx context.Context, id int, input entity.BookCopy) (context.Context, error, entity.BookCopy)
-	Delete(ctx context.Context, id int) (context.Context, error)
+	Create(ctx context.Context, input entity.BookCopy, claims *entity.AuthClaims) (context.Context, error, entity.BookCopy)
+	Update(ctx context.Context, id int, input entity.BookCopy, claims *entity.AuthClaims) (context.Context, error, entity.BookCopy)
+	Delete(ctx context.Context, id int, claims *entity.AuthClaims) (context.Context, error)
 }

@@ -3,13 +3,14 @@ package usecase
 import (
 	"context"
 	"errors"
+	"testing"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	mm "github.com/Leli2004/API_Go_biblioteca/internal/api/book/mocks"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"testing"
 )
 
 type useCaseSetup struct {
@@ -69,7 +70,8 @@ func Test_List_UseCase(t *testing.T) {
 func Test_Create_UseCase_Validation(t *testing.T) {
 	s := setup(t)
 	s.sqlMock.ExpectBegin()
-	_, e, r := s.uc.Create(s.ctx, entity.Book{})
+	claims := &entity.AuthClaims{Role: entity.RoleAdmin}
+	_, e, r := s.uc.Create(s.ctx, entity.Book{}, claims)
 	assert.Error(t, e)
 	assert.Equal(t, entity.Book{}, r)
 	s.repo.AssertNotCalled(t, "Create")
@@ -78,7 +80,8 @@ func Test_Create_UseCase_Validation(t *testing.T) {
 func Test_Update_UseCase_Validation(t *testing.T) {
 	s := setup(t)
 	s.sqlMock.ExpectBegin()
-	_, e, r := s.uc.Update(s.ctx, 1, entity.Book{})
+	claims := &entity.AuthClaims{Role: entity.RoleAdmin}
+	_, e, r := s.uc.Update(s.ctx, 1, entity.Book{}, claims)
 	assert.Error(t, e)
 	assert.Equal(t, entity.Book{}, r)
 	s.repo.AssertNotCalled(t, "Update")
@@ -89,7 +92,8 @@ func Test_Delete_UseCase(t *testing.T) {
 	s.sqlMock.ExpectBegin()
 	s.repo.On("Delete", mock.Anything, mock.Anything, 1).Return(s.ctx, nil).Once()
 	s.sqlMock.ExpectCommit()
-	c, e := s.uc.Delete(s.ctx, 1)
+	claims := &entity.AuthClaims{Role: entity.RoleAdmin}
+	c, e := s.uc.Delete(s.ctx, 1, claims)
 	assert.NoError(t, e)
 	assert.Equal(t, s.ctx, c)
 }

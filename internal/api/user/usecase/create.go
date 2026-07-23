@@ -20,7 +20,11 @@ func NewCreateUC(db *sqlx.DB, repo user.Repository) CreateUC {
 	return CreateUC{db: db, repo: repo}
 }
 
-func (u *CreateUC) Execute(ctx context.Context, input entity.User) (returnedCtx context.Context, err error, result entity.User) {
+func (u *CreateUC) Execute(ctx context.Context, input entity.User, claims *entity.AuthClaims) (returnedCtx context.Context, err error, result entity.User) {
+	if err := security.ValidateRoles(claims, entity.RoleAdmin); err != nil {
+		return ctx, err, result
+	}
+
 	tx, err := helpers.OpenTransaction(ctx, u.db)
 	if err != nil {
 		return ctx, err, result

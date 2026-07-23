@@ -7,6 +7,7 @@ import (
 	"github.com/Leli2004/API_Go_biblioteca/internal/api/loan"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/Leli2004/API_Go_biblioteca/internal/helpers"
+	"github.com/Leli2004/API_Go_biblioteca/internal/security"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -19,7 +20,11 @@ func NewReturnUC(db *sqlx.DB, repo loan.Repository) ReturnUC {
 	return ReturnUC{db: db, repo: repo}
 }
 
-func (u *ReturnUC) Execute(ctx context.Context, loanId int, returnedAt *string) (returnedCtx context.Context, err error, result entity.Loan) {
+func (u *ReturnUC) Execute(ctx context.Context, loanId int, returnedAt *string, claims *entity.AuthClaims) (returnedCtx context.Context, err error, result entity.Loan) {
+	if err := security.ValidateRoles(claims, entity.RoleAdmin); err != nil {
+		return ctx, err, result
+	}
+
 	tx, err := helpers.OpenTransaction(ctx, u.db)
 	if err != nil {
 		return ctx, err, result

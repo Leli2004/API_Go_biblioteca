@@ -11,7 +11,7 @@ import (
 type UseCase interface {
 	List(ctx context.Context, input entity.AuthorFilters) (context.Context, error, entity.AuthorList)
 	Get(ctx context.Context, id int) (context.Context, error, entity.Author)
-	Create(ctx context.Context, input entity.Author) (context.Context, error, entity.Author)
-	Update(ctx context.Context, id int, input entity.Author) (context.Context, error, entity.Author)
-	Delete(ctx context.Context, id int) (context.Context, error)
+	Create(ctx context.Context, input entity.Author, claims *entity.AuthClaims) (context.Context, error, entity.Author)
+	Update(ctx context.Context, id int, input entity.Author, claims *entity.AuthClaims) (context.Context, error, entity.Author)
+	Delete(ctx context.Context, id int, claims *entity.AuthClaims) (context.Context, error)
 }

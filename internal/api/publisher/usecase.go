@@ -10,7 +10,7 @@ import (
 type UseCase interface {
 	List(ctx context.Context, input entity.PublisherFilters) (context.Context, error, entity.PublisherList)
 	Get(ctx context.Context, id int) (context.Context, error, entity.Publisher)
-	Create(ctx context.Context, input entity.Publisher) (context.Context, error, entity.Publisher)
-	Update(ctx context.Context, id int, input entity.Publisher) (context.Context, error, entity.Publisher)
-	Delete(ctx context.Context, id int) (context.Context, error)
+	Create(ctx context.Context, input entity.Publisher, claims *entity.AuthClaims) (context.Context, error, entity.Publisher)
+	Update(ctx context.Context, id int, input entity.Publisher, claims *entity.AuthClaims) (context.Context, error, entity.Publisher)
+	Delete(ctx context.Context, id int, claims *entity.AuthClaims) (context.Context, error)
 }

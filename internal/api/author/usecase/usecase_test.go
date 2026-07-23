@@ -260,7 +260,9 @@ func Test_Create_UseCase(t *testing.T) {
 
 		setup.sqlMock.ExpectCommit()
 
-		returnedCtx, err, result := setup.uc.Create(setup.ctx, input)
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
+
+		returnedCtx, err, result := setup.uc.Create(setup.ctx, input, claims)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, returnedCtx)
@@ -279,7 +281,9 @@ func Test_Create_UseCase(t *testing.T) {
 		setup.sqlMock.ExpectBegin()
 		setup.sqlMock.ExpectRollback()
 
-		returnedCtx, err, result := setup.uc.Create(setup.ctx, input)
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
+
+		returnedCtx, err, result := setup.uc.Create(setup.ctx, input, claims)
 
 		assert.Error(t, err)
 		assert.Equal(t, setup.ctx, returnedCtx)
@@ -307,7 +311,9 @@ func Test_Create_UseCase(t *testing.T) {
 
 		setup.sqlMock.ExpectRollback()
 
-		returnedCtx, err, result := setup.uc.Create(setup.ctx, input)
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
+
+		returnedCtx, err, result := setup.uc.Create(setup.ctx, input, claims)
 
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, expectedError)
@@ -329,7 +335,9 @@ func Test_Create_UseCase(t *testing.T) {
 			ExpectBegin().
 			WillReturnError(expectedError)
 
-		returnedCtx, err, result := setup.uc.Create(setup.ctx, input)
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
+
+		returnedCtx, err, result := setup.uc.Create(setup.ctx, input, claims)
 
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, expectedError)
@@ -365,11 +373,9 @@ func Test_Update_UseCase(t *testing.T) {
 
 		setup.sqlMock.ExpectCommit()
 
-		returnedCtx, err, result := setup.uc.Update(
-			setup.ctx,
-			id,
-			input,
-		)
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
+
+		returnedCtx, err, result := setup.uc.Update(setup.ctx, id, input, claims)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, returnedCtx)
@@ -390,11 +396,9 @@ func Test_Update_UseCase(t *testing.T) {
 		setup.sqlMock.ExpectBegin()
 		setup.sqlMock.ExpectRollback()
 
-		returnedCtx, err, result := setup.uc.Update(
-			setup.ctx,
-			id,
-			input,
-		)
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
+
+		returnedCtx, err, result := setup.uc.Update(setup.ctx, id, input, claims)
 
 		assert.Error(t, err)
 		assert.Equal(t, setup.ctx, returnedCtx)
@@ -424,11 +428,9 @@ func Test_Update_UseCase(t *testing.T) {
 
 		setup.sqlMock.ExpectRollback()
 
-		returnedCtx, err, result := setup.uc.Update(
-			setup.ctx,
-			id,
-			input,
-		)
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
+
+		returnedCtx, err, result := setup.uc.Update(setup.ctx, id, input, claims)
 
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, expectedError)
@@ -452,11 +454,9 @@ func Test_Update_UseCase(t *testing.T) {
 			ExpectBegin().
 			WillReturnError(expectedError)
 
-		returnedCtx, err, result := setup.uc.Update(
-			setup.ctx,
-			id,
-			input,
-		)
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
+
+		returnedCtx, err, result := setup.uc.Update(setup.ctx, id, input, claims)
 
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, expectedError)
@@ -483,7 +483,9 @@ func Test_Delete_UseCase(t *testing.T) {
 
 		setup.sqlMock.ExpectCommit()
 
-		returnedCtx, err := setup.uc.Delete(setup.ctx, id)
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
+
+		returnedCtx, err := setup.uc.Delete(setup.ctx, id, claims)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, returnedCtx)
@@ -507,7 +509,9 @@ func Test_Delete_UseCase(t *testing.T) {
 
 		setup.sqlMock.ExpectRollback()
 
-		returnedCtx, err := setup.uc.Delete(setup.ctx, id)
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
+
+		returnedCtx, err := setup.uc.Delete(setup.ctx, id, claims)
 
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, expectedError)
@@ -526,7 +530,9 @@ func Test_Delete_UseCase(t *testing.T) {
 			ExpectBegin().
 			WillReturnError(expectedError)
 
-		returnedCtx, err := setup.uc.Delete(setup.ctx, id)
+		claims := &entity.AuthClaims{Role: entity.RoleAdmin}
+
+		returnedCtx, err := setup.uc.Delete(setup.ctx, id, claims)
 
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, expectedError)
