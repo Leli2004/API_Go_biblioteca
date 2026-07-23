@@ -9,8 +9,11 @@ import (
 	authorMock "github.com/Leli2004/API_Go_biblioteca/internal/api/author/mocks"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
+	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+
+	"github.com/alicebob/miniredis/v2"
 )
 
 type useCaseSetup struct {
@@ -19,6 +22,7 @@ type useCaseSetup struct {
 	sqlMock  sqlmock.Sqlmock
 	database *sqlx.DB
 	ctx      context.Context
+	redis    *miniredis.Miniredis
 }
 
 func setup(t *testing.T) useCaseSetup {
@@ -28,18 +32,25 @@ func setup(t *testing.T) useCaseSetup {
 	db := sqlx.NewDb(sqlDB, "sqlmock")
 	repo := authorMock.NewRepository(t)
 
+	miniRedis := miniredis.RunT(t)
+	redisCli := redis.NewClient(&redis.Options{
+		Addr: miniRedis.Addr(),
+	})
+
 	t.Cleanup(func() {
 		_ = db.Close()
+		_ = redisCli.Close()
 	})
 
 	ctx := context.Background()
 
 	return useCaseSetup{
-		uc:       NewUseCase(db, repo),
+		uc:       NewUseCase(db, repo, redisCli),
 		repo:     repo,
 		sqlMock:  sqlMock,
 		database: db,
 		ctx:      ctx,
+		redis:    miniRedis,
 	}
 }
 

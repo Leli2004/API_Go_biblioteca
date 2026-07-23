@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,6 +15,7 @@ import (
 	authorHttp "github.com/Leli2004/API_Go_biblioteca/internal/api/author/delivery/http"
 	authorRepository "github.com/Leli2004/API_Go_biblioteca/internal/api/author/repository"
 	authorUseCase "github.com/Leli2004/API_Go_biblioteca/internal/api/author/usecase"
+	"github.com/Leli2004/API_Go_biblioteca/internal/redis"
 
 	bookHttp "github.com/Leli2004/API_Go_biblioteca/internal/api/book/delivery/http"
 	bookRepository "github.com/Leli2004/API_Go_biblioteca/internal/api/book/repository"
@@ -63,7 +65,14 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	log.Println(">>> Postgres conectado!")
 	defer dbSqlx.Close()
+
+	redisClient := redis.NewClient(config.GetRedis())
+	if err := redisClient.Ping(context.Background()).Err(); err != nil {
+		log.Fatal(err)
+	}
+	log.Println(">>> Redis conectado!")
 
 	e := echo.New()
 
@@ -76,7 +85,7 @@ func main() {
 
 	// Author
 	authorRepo := authorRepository.NewRepository()
-	authorUC := authorUseCase.NewUseCase(dbSqlx, authorRepo)
+	authorUC := authorUseCase.NewUseCase(dbSqlx, authorRepo, redisClient)
 	authorhandler := authorHttp.NewHandler(authorUC)
 	authorHttp.MapRoutes(e.Group("/author", jwtMiddleware.Handler()), authorhandler)
 
