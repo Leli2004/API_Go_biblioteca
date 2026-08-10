@@ -91,13 +91,13 @@ func main() {
 
 	// Genre
 	genreRepo := genreRepository.NewRepository()
-	genreUC := genreUseCase.NewUseCase(dbSqlx, genreRepo)
+	genreUC := genreUseCase.NewUseCase(dbSqlx, genreRepo, redisClient)
 	genreHandler := genreHttp.NewHandler(genreUC)
 	genreHttp.MapRoutes(e.Group("/genre", jwtMiddleware.Handler()), genreHandler)
 
 	// Publisher
 	publisherRepo := publisherRepository.NewRepository()
-	publisherUC := publisherUseCase.NewUseCase(dbSqlx, publisherRepo)
+	publisherUC := publisherUseCase.NewUseCase(dbSqlx, publisherRepo, redisClient)
 	publisherHandler := publisherHttp.NewHandler(publisherUC)
 	publisherHttp.MapRoutes(e.Group("/publisher", jwtMiddleware.Handler()), publisherHandler)
 
@@ -109,7 +109,7 @@ func main() {
 
 	// Book Copie
 	bookCopieRepo := bookCopieRepository.NewRepository()
-	bookCopieUC := bookCopieUseCase.NewUseCase(dbSqlx, bookCopieRepo)
+	bookCopieUC := bookCopieUseCase.NewUseCase(dbSqlx, bookCopieRepo, redisClient)
 	bookCopieHandler := bookCopieHttp.NewHandler(bookCopieUC)
 	bookCopieHttp.MapRoutes(e.Group("/book_copie", jwtMiddleware.Handler()), bookCopieHandler)
 
@@ -127,7 +127,7 @@ func main() {
 
 	// Loan
 	loanRepo := loanRepository.NewRepository()
-	loanUC := loanUseCase.NewUseCase(dbSqlx, loanRepo)
+	loanUC := loanUseCase.NewUseCase(dbSqlx, loanRepo, redisClient)
 	loanHandler := loanHttp.NewHandler(loanUC)
 	loanHttp.MapRoutes(e.Group("/loan", jwtMiddleware.Handler()), loanHandler)
 

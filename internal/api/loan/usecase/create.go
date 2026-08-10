@@ -9,15 +9,17 @@ import (
 	"github.com/Leli2004/API_Go_biblioteca/internal/helpers"
 	"github.com/Leli2004/API_Go_biblioteca/internal/security"
 	"github.com/jmoiron/sqlx"
+	"github.com/redis/go-redis/v9"
 )
 
 type CreateUC struct {
-	db   *sqlx.DB
-	repo loan.Repository
+	db       *sqlx.DB
+	repo     loan.Repository
+	redisCli *redis.Client
 }
 
-func NewCreateUC(db *sqlx.DB, repo loan.Repository) CreateUC {
-	return CreateUC{db: db, repo: repo}
+func NewCreateUC(db *sqlx.DB, repo loan.Repository, redisCli *redis.Client) CreateUC {
+	return CreateUC{db: db, repo: repo, redisCli: redisCli}
 }
 
 func (u *CreateUC) Execute(ctx context.Context, input entity.Loan, claims *entity.AuthClaims) (returnedCtx context.Context, err error, result entity.Loan) {
@@ -42,10 +44,12 @@ func (u *CreateUC) Execute(ctx context.Context, input entity.Loan, claims *entit
 		return ctx, errors.New("book_copy is already loaned"), entity.Loan{}
 	}
 
-	ctx, err, created := u.repo.Create(ctx, tx, input)
+	ctx, err, result = u.repo.Create(ctx, tx, input)
 	if err != nil {
 		return ctx, err, entity.Loan{}
 	}
 
-	return ctx, nil, created
+	_ = u.redisCli.Del(ctx, keyList).Err()
+
+	return
 }

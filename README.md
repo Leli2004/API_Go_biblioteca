@@ -110,8 +110,6 @@ make db-down
 
 ## TODO
 
-* [ ] Implementar cache com Redis.
-
 * [ ] Front-end (somente para facilitar uso das requests, diretório ./web).
 
 ---

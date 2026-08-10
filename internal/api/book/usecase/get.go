@@ -54,11 +54,11 @@ func (u *GetUC) Execute(ctx context.Context, id int) (returnedCtx context.Contex
 func (u *GetUC) saveRedis(ctx context.Context, result entity.Book, key string) {
 	data, err := json.Marshal(result)
 	if err != nil {
-		fmt.Errorf("Error saveRedis: %w", err)
+		log.Printf("error marshaling book to redis: %v", err)
 	}
 
 	err = u.redisCli.Set(ctx, key, data, 10*time.Minute).Err()
 	if err != nil {
-		log.Printf("error saving author to redis: %v", err)
+		log.Printf("error saving book to redis: %v", err)
 	}
 }

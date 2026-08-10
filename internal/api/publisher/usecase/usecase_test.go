@@ -3,13 +3,16 @@ package usecase
 import (
 	"context"
 	"errors"
+	"testing"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	mm "github.com/Leli2004/API_Go_biblioteca/internal/api/publisher/mocks"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
+	"github.com/alicebob/miniredis/v2"
 	"github.com/jmoiron/sqlx"
+	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"testing"
 )
 
 type useCaseSetup struct {
@@ -23,10 +26,17 @@ type useCaseSetup struct {
 func setup(t *testing.T) useCaseSetup {
 	s, m, e := sqlmock.New()
 	assert.NoError(t, e)
+
 	db := sqlx.NewDb(s, "sqlmock")
 	r := mm.NewRepository(t)
 	t.Cleanup(func() { _ = db.Close() })
-	return useCaseSetup{NewUseCase(db, r), r, m, db, context.Background()}
+
+	miniRedis := miniredis.RunT(t)
+	redisCli := redis.NewClient(&redis.Options{
+		Addr: miniRedis.Addr(),
+	})
+
+	return useCaseSetup{NewUseCase(db, r, redisCli), r, m, db, context.Background()}
 }
 
 func Test_Get_UseCase(t *testing.T) {
@@ -74,7 +84,7 @@ func Test_Create_UseCase_Validation(t *testing.T) {
 	claims := &entity.AuthClaims{Role: entity.RoleAdmin}
 
 	_, e, r := s.uc.Create(s.ctx, entity.Publisher{}, claims)
-	
+
 	assert.Error(t, e)
 	assert.Equal(t, entity.Publisher{}, r)
 	s.repo.AssertNotCalled(t, "Create")

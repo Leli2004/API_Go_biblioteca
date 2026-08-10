@@ -7,15 +7,17 @@ import (
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/Leli2004/API_Go_biblioteca/internal/helpers"
 	"github.com/jmoiron/sqlx"
+	"github.com/redis/go-redis/v9"
 )
 
 type CreateUC struct {
-	db   *sqlx.DB
-	repo author.Repository
+	db       *sqlx.DB
+	repo     author.Repository
+	redisCli *redis.Client
 }
 
-func NewCreateUC(db *sqlx.DB, repo author.Repository) CreateUC {
-	return CreateUC{db: db, repo: repo}
+func NewCreateUC(db *sqlx.DB, repo author.Repository, redisCli *redis.Client) CreateUC {
+	return CreateUC{db: db, repo: repo, redisCli: redisCli}
 }
 
 func (u *CreateUC) Execute(ctx context.Context, input entity.Author, claims *entity.AuthClaims) (returnedCtx context.Context, err error, result entity.Author) {
@@ -29,5 +31,12 @@ func (u *CreateUC) Execute(ctx context.Context, input entity.Author, claims *ent
 	if err != nil {
 		return ctx, err, entity.Author{}
 	}
-	return u.repo.Create(ctx, tx, input)
+
+	returnedCtx, err, result = u.repo.Create(ctx, tx, input)
+	if err != nil {
+		return ctx, err, result
+	}
+
+	_ = u.redisCli.Del(ctx, keyList).Err()
+	return
 }

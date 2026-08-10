@@ -8,7 +8,9 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	mm "github.com/Leli2004/API_Go_biblioteca/internal/api/book_copie/mocks"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
+	"github.com/alicebob/miniredis/v2"
 	"github.com/jmoiron/sqlx"
+	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -30,7 +32,12 @@ func setup(t *testing.T) useCaseSetup {
 
 	t.Cleanup(func() { _ = db.Close() })
 
-	return useCaseSetup{NewUseCase(db, r), r, m, db, context.Background()}
+	miniRedis := miniredis.RunT(t)
+	redisCli := redis.NewClient(&redis.Options{
+		Addr: miniRedis.Addr(),
+	})
+
+	return useCaseSetup{NewUseCase(db, r, redisCli), r, m, db, context.Background()}
 }
 func Test_Get_UseCase(t *testing.T) {
 

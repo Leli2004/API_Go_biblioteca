@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"time"
 
@@ -28,10 +27,10 @@ func NewListUC(db *sqlx.DB, repo author.Repository, redisCli *redis.Client) List
 	}
 }
 
-func (u *ListUC) Execute(ctx context.Context, input entity.AuthorFilters) (returnedCtx context.Context, err error, result entity.AuthorList) {
-	key := "biblioteca_author_list"
+const keyList = "biblioteca_author_list"
 
-	cached, err := u.redisCli.Get(ctx, key).Result()
+func (u *ListUC) Execute(ctx context.Context, input entity.AuthorFilters) (returnedCtx context.Context, err error, result entity.AuthorList) {
+	cached, err := u.redisCli.Get(ctx, keyList).Result()
 	if err == nil {
 		err = json.Unmarshal([]byte(cached), &result)
 		if err == nil {
@@ -52,14 +51,14 @@ func (u *ListUC) Execute(ctx context.Context, input entity.AuthorFilters) (retur
 		return ctx, err, result
 	}
 
-	u.saveRedis(ctx, result, key)
+	u.saveRedis(ctx, result, keyList)
 	return
 }
 
 func (u *ListUC) saveRedis(ctx context.Context, result entity.AuthorList, key string) {
 	data, err := json.Marshal(result)
 	if err != nil {
-		fmt.Errorf("Error saveRedis: %w", err)
+		log.Printf("error marshaling author to redis: %v", err)
 	}
 
 	err = u.redisCli.Set(ctx, key, data, 10*time.Minute).Err()

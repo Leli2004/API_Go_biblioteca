@@ -22,9 +22,9 @@ func NewUseCase(db *sqlx.DB, repo author.Repository, redisCli *redis.Client) *Au
 	return &AuthorUC{
 		listUC:   NewListUC(db, repo, redisCli),
 		getUC:    NewGetUC(db, repo, redisCli),
-		createUC: NewCreateUC(db, repo),
-		updateUC: NewUpdateUC(db, repo),
-		deleteUC: NewDeleteUC(db, repo),
+		createUC: NewCreateUC(db, repo, redisCli),
+		updateUC: NewUpdateUC(db, repo, redisCli),
+		deleteUC: NewDeleteUC(db, repo, redisCli),
 		repo:     repo,
 	}
 }

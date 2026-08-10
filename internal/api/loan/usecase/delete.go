@@ -8,15 +8,17 @@ import (
 	"github.com/Leli2004/API_Go_biblioteca/internal/helpers"
 	"github.com/Leli2004/API_Go_biblioteca/internal/security"
 	"github.com/jmoiron/sqlx"
+	"github.com/redis/go-redis/v9"
 )
 
 type DeleteUC struct {
-	db   *sqlx.DB
-	repo loan.Repository
+	db       *sqlx.DB
+	repo     loan.Repository
+	redisCli *redis.Client
 }
 
-func NewDeleteUC(db *sqlx.DB, repo loan.Repository) DeleteUC {
-	return DeleteUC{db: db, repo: repo}
+func NewDeleteUC(db *sqlx.DB, repo loan.Repository, redisCli *redis.Client) DeleteUC {
+	return DeleteUC{db: db, repo: repo, redisCli: redisCli}
 }
 
 func (u *DeleteUC) Execute(ctx context.Context, id int, claims *entity.AuthClaims) (returnedCtx context.Context, err error, result entity.Loan) {
@@ -30,5 +32,12 @@ func (u *DeleteUC) Execute(ctx context.Context, id int, claims *entity.AuthClaim
 	}
 	defer helpers.CloseTransaction(tx, &err)
 
-	return u.repo.Delete(ctx, tx, id)
+	returnedCtx, err, result = u.repo.Delete(ctx, tx, id)
+	if err != nil {
+		return ctx, err, result
+	}
+
+	_ = u.redisCli.Del(ctx, helpers.CacheGetKeyId(id, "loan"), keyList).Err()
+
+	return
 }

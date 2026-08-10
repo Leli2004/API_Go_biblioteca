@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"time"
 
@@ -25,7 +24,7 @@ func NewGetUC(db *sqlx.DB, repo author.Repository, redisCli *redis.Client) GetUC
 }
 
 func (u *GetUC) Execute(ctx context.Context, id int) (returnedCtx context.Context, err error, result entity.Author) {
-	key := fmt.Sprintf("biblioteca_author_get_%d", id)
+	key := helpers.CacheGetKeyId(id, "author")
 
 	cached, err := u.redisCli.Get(ctx, key).Result()
 	if err == nil {
@@ -54,7 +53,7 @@ func (u *GetUC) Execute(ctx context.Context, id int) (returnedCtx context.Contex
 func (u *GetUC) saveRedis(ctx context.Context, result entity.Author, key string) {
 	data, err := json.Marshal(result)
 	if err != nil {
-		fmt.Errorf("Error saveRedis: %w", err)
+		log.Printf("error marshaling author to redis: %v", err)
 	}
 
 	err = u.redisCli.Set(ctx, key, data, 10*time.Minute).Err()
