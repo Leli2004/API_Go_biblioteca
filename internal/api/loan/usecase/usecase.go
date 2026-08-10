@@ -6,6 +6,7 @@ import (
 	"github.com/Leli2004/API_Go_biblioteca/internal/api/loan"
 	"github.com/Leli2004/API_Go_biblioteca/internal/entity"
 	"github.com/jmoiron/sqlx"
+	"github.com/redis/go-redis/v9"
 )
 
 type LoanUC struct {
@@ -15,15 +16,16 @@ type LoanUC struct {
 	getUC    GetUC
 	deleteUC DeleteUC
 	repo     loan.Repository
+	redisCli *redis.Client
 }
 
-func NewUseCase(db *sqlx.DB, repo loan.Repository) *LoanUC {
+func NewUseCase(db *sqlx.DB, repo loan.Repository, redisCli *redis.Client) *LoanUC {
 	return &LoanUC{
-		createUC: NewCreateUC(db, repo),
-		returnUC: NewReturnUC(db, repo),
-		listUC:   NewListUC(db, repo),
-		getUC:    NewGetUC(db, repo),
-		deleteUC: NewDeleteUC(db, repo),
+		createUC: NewCreateUC(db, repo, redisCli),
+		returnUC: NewReturnUC(db, repo, redisCli),
+		listUC:   NewListUC(db, repo, redisCli),
+		getUC:    NewGetUC(db, repo, redisCli),
+		deleteUC: NewDeleteUC(db, repo, redisCli),
 		repo:     repo,
 	}
 }

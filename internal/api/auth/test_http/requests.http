@@ -1,14 +1,3 @@
-### Criar usuário
-POST http://localhost:8001/user
-Content-Type: application/json
-
-{
-  "name": "Administrador",
-  "username": "admin",
-  "email": "admin@biblioteca.com",
-  "password": "senha123",
-  "role": "admin"
-}
 
 ### Login
 POST http://localhost:8001/auth/login
@@ -21,4 +10,4 @@ Content-Type: application/json
 
 ### Dados do usuário autenticado
 GET http://localhost:8001/auth/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiaXNzIjoiYmlibGlvdGVjYS1hcGkiLCJzdWIiOiI0IiwiZXhwIjoxNzg0ODQwMjQwLCJuYmYiOjE3ODQ3NTM4NDAsImlhdCI6MTc4NDc1Mzg0MH0.EhUJCqM6gFZVfhsap93opaQsD2mNTos4r1l60PBoCwY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiaXNzIjoiYmlibGlvdGVjYS1hcGkiLCJzdWIiOiI0IiwiZXhwIjoxNzg0OTI5MDIzLCJuYmYiOjE3ODQ4NDI2MjMsImlhdCI6MTc4NDg0MjYyM30.I4431innvyOXO78fUSRhOxrjIYj_fXAIpHui8SM4VbI

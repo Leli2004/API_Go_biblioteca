@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,6 +15,7 @@ import (
 	authorHttp "github.com/Leli2004/API_Go_biblioteca/internal/api/author/delivery/http"
 	authorRepository "github.com/Leli2004/API_Go_biblioteca/internal/api/author/repository"
 	authorUseCase "github.com/Leli2004/API_Go_biblioteca/internal/api/author/usecase"
+	"github.com/Leli2004/API_Go_biblioteca/internal/redis"
 
 	bookHttp "github.com/Leli2004/API_Go_biblioteca/internal/api/book/delivery/http"
 	bookRepository "github.com/Leli2004/API_Go_biblioteca/internal/api/book/repository"
@@ -63,7 +65,14 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	log.Println(">>> Postgres conectado!")
 	defer dbSqlx.Close()
+
+	redisClient := redis.NewClient(config.GetRedis())
+	if err := redisClient.Ping(context.Background()).Err(); err != nil {
+		log.Fatal(err)
+	}
+	log.Println(">>> Redis conectado!")
 
 	e := echo.New()
 
@@ -76,31 +85,31 @@ func main() {
 
 	// Author
 	authorRepo := authorRepository.NewRepository()
-	authorUC := authorUseCase.NewUseCase(dbSqlx, authorRepo)
+	authorUC := authorUseCase.NewUseCase(dbSqlx, authorRepo, redisClient)
 	authorhandler := authorHttp.NewHandler(authorUC)
 	authorHttp.MapRoutes(e.Group("/author", jwtMiddleware.Handler()), authorhandler)
 
 	// Genre
 	genreRepo := genreRepository.NewRepository()
-	genreUC := genreUseCase.NewUseCase(dbSqlx, genreRepo)
+	genreUC := genreUseCase.NewUseCase(dbSqlx, genreRepo, redisClient)
 	genreHandler := genreHttp.NewHandler(genreUC)
 	genreHttp.MapRoutes(e.Group("/genre", jwtMiddleware.Handler()), genreHandler)
 
 	// Publisher
 	publisherRepo := publisherRepository.NewRepository()
-	publisherUC := publisherUseCase.NewUseCase(dbSqlx, publisherRepo)
+	publisherUC := publisherUseCase.NewUseCase(dbSqlx, publisherRepo, redisClient)
 	publisherHandler := publisherHttp.NewHandler(publisherUC)
 	publisherHttp.MapRoutes(e.Group("/publisher", jwtMiddleware.Handler()), publisherHandler)
 
 	// Book
 	bookRepo := bookRepository.NewRepository()
-	bookUC := bookUseCase.NewUseCase(dbSqlx, bookRepo)
+	bookUC := bookUseCase.NewUseCase(dbSqlx, bookRepo, redisClient)
 	bookHandler := bookHttp.NewHandler(bookUC)
 	bookHttp.MapRoutes(e.Group("/book", jwtMiddleware.Handler()), bookHandler)
 
 	// Book Copie
 	bookCopieRepo := bookCopieRepository.NewRepository()
-	bookCopieUC := bookCopieUseCase.NewUseCase(dbSqlx, bookCopieRepo)
+	bookCopieUC := bookCopieUseCase.NewUseCase(dbSqlx, bookCopieRepo, redisClient)
 	bookCopieHandler := bookCopieHttp.NewHandler(bookCopieUC)
 	bookCopieHttp.MapRoutes(e.Group("/book_copie", jwtMiddleware.Handler()), bookCopieHandler)
 
@@ -118,7 +127,7 @@ func main() {
 
 	// Loan
 	loanRepo := loanRepository.NewRepository()
-	loanUC := loanUseCase.NewUseCase(dbSqlx, loanRepo)
+	loanUC := loanUseCase.NewUseCase(dbSqlx, loanRepo, redisClient)
 	loanHandler := loanHttp.NewHandler(loanUC)
 	loanHttp.MapRoutes(e.Group("/loan", jwtMiddleware.Handler()), loanHandler)
 
