@@ -1,0 +1,1283 @@
+openapi: 3.0.3
+
+info:
+  title: API Biblioteca
+  description: API REST para gerenciamento de uma biblioteca (livros, autores, editoras, exemplares, empréstimos, reservas e usuários).
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8008
+    description: Ambiente local
+
+tags:
+  - name: Autenticação
+    description: Operações relacionadas à autenticação dos usuários.
+  - name: Autores
+    description: Gerenciamento dos autores.
+  - name: Gêneros
+    description: Gerenciamento dos gêneros literários.
+  - name: Editoras
+    description: Gerenciamento das editoras.
+  - name: Livros
+    description: Gerenciamento dos livros.
+  - name: Exemplares
+    description: Gerenciamento dos exemplares dos livros.
+  - name: Usuários
+    description: Gerenciamento dos usuários.
+  - name: Empréstimos
+    description: Gerenciamento dos empréstimos de exemplares.
+  - name: Reservas
+    description: Gerenciamento das reservas de livros.
+
+security:
+  - BearerAuth: []
+
+paths:
+  /auth/login:
+    post:
+      tags: [Autenticação]
+      summary: Autentica um usuário
+      description: Rota pública. Não exige JWT.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              username: admin
+              password: senha123
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/me:
+    get:
+      tags: [Autenticação]
+      summary: Retorna os dados do usuário autenticado
+      responses:
+        '200':
+          description: Dados do usuário autenticado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthUser'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /author/list:
+    get:
+      tags: [Autores]
+      summary: Lista autores
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Lista paginada de autores
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /author:
+    post:
+      tags: [Autores]
+      summary: Cadastra um autor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorInput'
+            example:
+              name: Ana Paula Maia
+      responses:
+        '201':
+          description: Autor criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /author/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Autores]
+      summary: Consulta um autor pelo ID
+      responses:
+        '200':
+          description: Autor encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      tags: [Autores]
+      summary: Atualiza um autor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorInput'
+            example:
+              name: Itamar Vieira Junior
+      responses:
+        '200':
+          description: Autor atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      tags: [Autores]
+      summary: Remove um autor
+      responses:
+        '204':
+          description: Autor removido
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /genre/list:
+    get:
+      tags: [Gêneros]
+      summary: Lista gêneros
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Lista paginada de gêneros
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenreList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /genre:
+    post:
+      tags: [Gêneros]
+      summary: Cadastra um gênero
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenreInput'
+            example:
+              name: Fantasia
+              description: Ficção com elementos mágicos ou sobrenaturais.
+      responses:
+        '201':
+          description: Gênero criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genre'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /genre/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Gêneros]
+      summary: Consulta um gênero pelo ID
+      responses:
+        '200':
+          description: Gênero encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genre'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      tags: [Gêneros]
+      summary: Atualiza um gênero
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenreInput'
+            example:
+              name: Fantasia
+              description: Ficção com elementos mágicos e/ou sobrenaturais.
+      responses:
+        '200':
+          description: Gênero atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genre'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      tags: [Gêneros]
+      summary: Remove um gênero
+      responses:
+        '204':
+          description: Gênero removido
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /publisher/list:
+    get:
+      tags: [Editoras]
+      summary: Lista editoras
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Lista paginada de editoras
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublisherList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /publisher:
+    post:
+      tags: [Editoras]
+      summary: Cadastra uma editora
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublisherInput'
+            example:
+              name: Editora Exemplo
+              website: https://editora.exemplo
+      responses:
+        '201':
+          description: Editora criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publisher'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /publisher/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Editoras]
+      summary: Consulta uma editora pelo ID
+      responses:
+        '200':
+          description: Editora encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publisher'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      tags: [Editoras]
+      summary: Atualiza uma editora
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublisherInput'
+            example:
+              name: Editora Exemplo Atualizada
+              website: https://editora.exemplo/novo
+      responses:
+        '200':
+          description: Editora atualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publisher'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      tags: [Editoras]
+      summary: Remove uma editora
+      responses:
+        '204':
+          description: Editora removida
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /book/list:
+    get:
+      tags: [Livros]
+      summary: Lista livros
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Lista paginada de livros
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /book:
+    post:
+      tags: [Livros]
+      summary: Cadastra um livro
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookInput'
+            example:
+              publisher_id: 1
+              title: O Poder do Hábito
+              publication_year: 2012
+              description: Livro sobre hábitos e mudança de comportamento.
+              author_ids: [2]
+              genre_ids: [2, 3]
+      responses:
+        '201':
+          description: Livro criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /book/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Livros]
+      summary: Consulta um livro pelo ID
+      description: Retorna o livro incluindo autores, gêneros e exemplares vinculados.
+      responses:
+        '200':
+          description: Livro encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      tags: [Livros]
+      summary: Atualiza um livro
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookInput'
+            example:
+              publisher_id: 1
+              title: O Poder do Hábito - Edição Atualizada
+              publication_year: 2012
+              description: Edição atualizada com novos exemplos.
+      responses:
+        '200':
+          description: Livro atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      tags: [Livros]
+      summary: Remove um livro
+      responses:
+        '204':
+          description: Livro removido
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /book_copie/list:
+    get:
+      tags: [Exemplares]
+      summary: Lista exemplares
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Lista paginada de exemplares
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookCopyList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /book_copie:
+    post:
+      tags: [Exemplares]
+      summary: Cadastra um exemplar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookCopyInput'
+            example:
+              book_id: 2
+              barcode: xyz-001
+              status: available
+      responses:
+        '201':
+          description: Exemplar criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookCopy'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /book_copie/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Exemplares]
+      summary: Consulta um exemplar pelo ID
+      responses:
+        '200':
+          description: Exemplar encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookCopy'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      tags: [Exemplares]
+      summary: Atualiza um exemplar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookCopyInput'
+            example:
+              book_id: 2
+              barcode: XYZ001
+              status: available
+      responses:
+        '200':
+          description: Exemplar atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookCopy'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      tags: [Exemplares]
+      summary: Remove um exemplar
+      responses:
+        '204':
+          description: Exemplar removido
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /user/list:
+    get:
+      tags: [Usuários]
+      summary: Lista usuários
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Lista paginada de usuários
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /user:
+    post:
+      tags: [Usuários]
+      summary: Cadastra um usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+            example:
+              name: Daniel
+              username: daniel
+              email: daniel@example.com
+              password: senha123
+              phone: '11999999999'
+              role: user
+      responses:
+        '201':
+          description: Usuário criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /user/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Usuários]
+      summary: Consulta um usuário pelo ID
+      responses:
+        '200':
+          description: Usuário encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      tags: [Usuários]
+      summary: Atualiza um usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+            example:
+              name: Daniel
+              username: daniel
+              email: daniel@example.com
+              password: senha123
+              phone: '11999999999'
+              role: user
+      responses:
+        '200':
+          description: Usuário atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      tags: [Usuários]
+      summary: Remove um usuário
+      responses:
+        '204':
+          description: Usuário removido
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loan/create:
+    post:
+      tags: [Empréstimos]
+      summary: Cria um empréstimo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanCreateInput'
+            example:
+              user_id: 1
+              book_copy_id: 1
+              loan_date: '2026-07-13T10:00:00Z'
+              due_date: '2026-07-27T10:00:00Z'
+      responses:
+        '201':
+          description: Empréstimo criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loan/return:
+    post:
+      tags: [Empréstimos]
+      summary: Registra a devolução de um empréstimo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanReturnInput'
+            example:
+              loan_id: 1
+              returned_at: '2026-07-20T12:00:00Z'
+      responses:
+        '200':
+          description: Devolução registrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loan/list:
+    get:
+      tags: [Empréstimos]
+      summary: Lista empréstimos
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Lista paginada de empréstimos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loan/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Empréstimos]
+      summary: Consulta um empréstimo pelo ID
+      responses:
+        '200':
+          description: Empréstimo encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      tags: [Empréstimos]
+      summary: Remove um empréstimo
+      responses:
+        '204':
+          description: Empréstimo removido
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /reservation/create:
+    post:
+      tags: [Reservas]
+      summary: Cria uma reserva de livro
+      description: >
+        Status inicial sempre é `waiting`. Este é o único endpoint implementado
+        para o recurso de reservas — ainda não há list, get, update ou delete.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationInput'
+            example:
+              user_id: 1
+              book_id: 1
+      responses:
+        '201':
+          description: Reserva criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: Identificador numérico do recurso
+      schema:
+        type: integer
+        example: 1
+    Offset:
+      name: offset
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 0
+    Limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 10
+
+  responses:
+    BadRequest:
+      description: Requisição inválida
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RespError'
+    Unauthorized:
+      description: JWT ausente, inválido ou expirado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RespError'
+    NotFound:
+      description: Recurso não encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RespError'
+
+  schemas:
+    RespError:
+      type: object
+      properties:
+        code:
+          type: integer
+        error:
+          type: string
+
+    # ---------- Auth ----------
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+
+    AuthUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [admin, user]
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        token_type:
+          type: string
+          example: Bearer
+        expires_in:
+          type: integer
+          description: Tempo de expiração em segundos
+        user:
+          $ref: '#/components/schemas/AuthUser'
+
+    # ---------- Author ----------
+    AuthorInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+
+    Author:
+      allOf:
+        - $ref: '#/components/schemas/AuthorInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+            created_at:
+              type: string
+              format: date-time
+              nullable: true
+            updated_at:
+              type: string
+              format: date-time
+              nullable: true
+
+    AuthorList:
+      type: object
+      properties:
+        offset:
+          type: integer
+        limit:
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Author'
+
+    # ---------- Genre ----------
+    GenreInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+
+    Genre:
+      allOf:
+        - $ref: '#/components/schemas/GenreInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+            created_at:
+              type: string
+              format: date-time
+              nullable: true
+            updated_at:
+              type: string
+              format: date-time
+              nullable: true
+
+    GenreList:
+      type: object
+      properties:
+        offset:
+          type: integer
+        limit:
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Genre'
+
+    # ---------- Publisher ----------
+    PublisherInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        website:
+          type: string
+          nullable: true
+
+    Publisher:
+      allOf:
+        - $ref: '#/components/schemas/PublisherInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+            created_at:
+              type: string
+              format: date-time
+              nullable: true
+            updated_at:
+              type: string
+              format: date-time
+              nullable: true
+
+    PublisherList:
+      type: object
+      properties:
+        offset:
+          type: integer
+        limit:
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Publisher'
+
+    # ---------- Book ----------
+    BookInput:
+      type: object
+      required: [title]
+      properties:
+        publisher_id:
+          type: integer
+          nullable: true
+        title:
+          type: string
+        publication_year:
+          type: integer
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        author_ids:
+          type: array
+          items:
+            type: integer
+        genre_ids:
+          type: array
+          items:
+            type: integer
+
+    Book:
+      allOf:
+        - $ref: '#/components/schemas/BookInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+            created_at:
+              type: string
+              format: date-time
+              nullable: true
+            updated_at:
+              type: string
+              format: date-time
+              nullable: true
+            authors:
+              type: array
+              items:
+                $ref: '#/components/schemas/Author'
+            genres:
+              type: array
+              items:
+                $ref: '#/components/schemas/Genre'
+            copies:
+              type: array
+              items:
+                $ref: '#/components/schemas/BookCopy'
+
+    BookList:
+      type: object
+      properties:
+        offset:
+          type: integer
+        limit:
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Book'
+
+    # ---------- Book Copy ----------
+    BookCopyInput:
+      type: object
+      required: [book_id, barcode]
+      properties:
+        book_id:
+          type: integer
+        barcode:
+          type: string
+        status:
+          type: string
+          enum: [available, loaned, maintenance, lost]
+
+    BookCopy:
+      allOf:
+        - $ref: '#/components/schemas/BookCopyInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+            created_at:
+              type: string
+              format: date-time
+              nullable: true
+            updated_at:
+              type: string
+              format: date-time
+              nullable: true
+
+    BookCopyList:
+      type: object
+      properties:
+        offset:
+          type: integer
+        limit:
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookCopy'
+
+    # ---------- User ----------
+    UserInput:
+      type: object
+      required: [name, username, email]
+      properties:
+        name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          description: Obrigatório apenas na criação.
+        phone:
+          type: string
+          nullable: true
+        role:
+          type: string
+          enum: [admin, user]
+          default: user
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+          nullable: true
+        role:
+          type: string
+          enum: [admin, user]
+        active:
+          type: boolean
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    UserList:
+      type: object
+      properties:
+        offset:
+          type: integer
+        limit:
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+
+    # ---------- Loan ----------
+    LoanCreateInput:
+      type: object
+      required: [user_id, book_copy_id, due_date]
+      properties:
+        user_id:
+          type: integer
+        book_copy_id:
+          type: integer
+        loan_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Se omitido, assume a data/hora atual.
+        due_date:
+          type: string
+          format: date-time
+
+    LoanReturnInput:
+      type: object
+      required: [loan_id]
+      properties:
+        loan_id:
+          type: integer
+        returned_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Se omitido, assume a data/hora atual.
+
+    Loan:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        book_copy_id:
+          type: integer
+        loan_date:
+          type: string
+          format: date-time
+          nullable: true
+        due_date:
+          type: string
+          format: date-time
+          nullable: true
+        returned_at:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          type: string
+          enum: [active, returned]
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    LoanList:
+      type: object
+      properties:
+        offset:
+          type: integer
+        limit:
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Loan'
+
+    # ---------- Reservation ----------
+    ReservationInput:
+      type: object
+      required: [user_id, book_id]
+      properties:
+        user_id:
+          type: integer
+        book_id:
+          type: integer
+
+    Reservation:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        book_id:
+          type: integer
+        position:
+          type: integer
+          nullable: true
+        status:
+          type: string
+          enum: [waiting, available, cancelled, completed]
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true

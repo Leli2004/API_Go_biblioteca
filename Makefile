@@ -1,4 +1,4 @@
-.PHONY: help db-up db-down db-logs db-shell db-create run test tidy build clean unit-test-api
+.PHONY: help db-up db-down db-logs db-shell db-create run test tidy build clean unit-test-api run-swagger
 
 APP_NAME=api_biblioteca
 DB_CONTAINER=postgres
@@ -35,6 +35,7 @@ help:
 	@echo "  make unit-test-api - Executa os testes unitários de ./internal/api/"
 	@echo "  make redis-up		- Sobe o container do Redis"
 	@echo "  make redis-down	- Remove o container do Redis"
+	@echo "  make run-swagger   - Compila Swagger na porta 8080"
 
 #****************************************************#
 # Database Postgres
@@ -99,5 +100,14 @@ clean:
 unit-test-api:
 	chmod +x scripts/unit-test-api.sh
 	./scripts/unit-test-api.sh
+
+#****************************************************#
+# Swagger
+run-swagger:
+	docker run --rm \
+		-p 8080:8080 \
+		-e SWAGGER_JSON=/foo/swagger.yaml \
+		-v "$(PWD)/docs/swagger.yaml:/foo/swagger.yaml" \
+		swaggerapi/swagger-ui
 
 #****************************************************#

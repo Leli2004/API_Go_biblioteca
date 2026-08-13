@@ -108,8 +108,3 @@ make db-down
 
 ---
 
-## TODO
-
-* [ ] Front-end (somente para facilitar uso das requests, diretório ./web).
-
----
