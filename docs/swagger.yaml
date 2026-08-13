@@ -6,7 +6,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: http://localhost:8008
+  - url: http://localhost:8001
     description: Ambiente local
 
 tags:

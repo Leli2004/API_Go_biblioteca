@@ -56,6 +56,8 @@ import (
 	"github.com/Leli2004/API_Go_biblioteca/internal/security"
 )
 
+const basePath = "/biblioteca/v1"
+
 func main() {
 	if err := config.Load(); err != nil {
 		panic(fmt.Errorf("ERROR: erro ao carregar configurações: %w", err))
@@ -87,55 +89,55 @@ func main() {
 	authorRepo := authorRepository.NewRepository()
 	authorUC := authorUseCase.NewUseCase(dbSqlx, authorRepo, redisClient)
 	authorhandler := authorHttp.NewHandler(authorUC)
-	authorHttp.MapRoutes(e.Group("/author", jwtMiddleware.Handler()), authorhandler)
+	authorHttp.MapRoutes(e.Group(fmt.Sprintf("%s/author", basePath), jwtMiddleware.Handler()), authorhandler)
 
 	// Genre
 	genreRepo := genreRepository.NewRepository()
 	genreUC := genreUseCase.NewUseCase(dbSqlx, genreRepo, redisClient)
 	genreHandler := genreHttp.NewHandler(genreUC)
-	genreHttp.MapRoutes(e.Group("/genre", jwtMiddleware.Handler()), genreHandler)
+	genreHttp.MapRoutes(e.Group(fmt.Sprintf("%s/genre", basePath), jwtMiddleware.Handler()), genreHandler)
 
 	// Publisher
 	publisherRepo := publisherRepository.NewRepository()
 	publisherUC := publisherUseCase.NewUseCase(dbSqlx, publisherRepo, redisClient)
 	publisherHandler := publisherHttp.NewHandler(publisherUC)
-	publisherHttp.MapRoutes(e.Group("/publisher", jwtMiddleware.Handler()), publisherHandler)
+	publisherHttp.MapRoutes(e.Group(fmt.Sprintf("%s/publisher", basePath), jwtMiddleware.Handler()), publisherHandler)
 
 	// Book
 	bookRepo := bookRepository.NewRepository()
 	bookUC := bookUseCase.NewUseCase(dbSqlx, bookRepo, redisClient)
 	bookHandler := bookHttp.NewHandler(bookUC)
-	bookHttp.MapRoutes(e.Group("/book", jwtMiddleware.Handler()), bookHandler)
+	bookHttp.MapRoutes(e.Group(fmt.Sprintf("%s/book", basePath), jwtMiddleware.Handler()), bookHandler)
 
 	// Book Copie
 	bookCopieRepo := bookCopieRepository.NewRepository()
 	bookCopieUC := bookCopieUseCase.NewUseCase(dbSqlx, bookCopieRepo, redisClient)
 	bookCopieHandler := bookCopieHttp.NewHandler(bookCopieUC)
-	bookCopieHttp.MapRoutes(e.Group("/book_copie", jwtMiddleware.Handler()), bookCopieHandler)
+	bookCopieHttp.MapRoutes(e.Group(fmt.Sprintf("%s/book_copie", basePath), jwtMiddleware.Handler()), bookCopieHandler)
 
 	// User
 	userRepo := userRepository.NewRepository()
 	userUC := userUseCase.NewUseCase(dbSqlx, userRepo)
 	userHandler := userHttp.NewHandler(userUC)
-	userHttp.MapRoutes(e.Group("/user", jwtMiddleware.Handler()), userHandler)
+	userHttp.MapRoutes(e.Group(fmt.Sprintf("%s/user", basePath), jwtMiddleware.Handler()), userHandler)
 
 	// Auth
 	authUC := authUseCase.NewUseCase(dbSqlx, userRepo, tokenManager)
 	authHandler := authHttp.NewHandler(authUC)
-	authHttp.MapPublicRoutes(e, authHandler)                                       // Rota pública: não exige JWT
-	authHttp.MapProtectedRoutes(e.Group("", jwtMiddleware.Handler()), authHandler) // Rota protegida: exige JWT
+	authHttp.MapPublicRoutes(e.Group(basePath), authHandler)                             // Rota pública: não exige JWT
+	authHttp.MapProtectedRoutes(e.Group(basePath, jwtMiddleware.Handler()), authHandler) // Rota protegida: exige JWT
 
 	// Loan
 	loanRepo := loanRepository.NewRepository()
 	loanUC := loanUseCase.NewUseCase(dbSqlx, loanRepo, redisClient)
 	loanHandler := loanHttp.NewHandler(loanUC)
-	loanHttp.MapRoutes(e.Group("/loan", jwtMiddleware.Handler()), loanHandler)
+	loanHttp.MapRoutes(e.Group(fmt.Sprintf("%s/loan", basePath), jwtMiddleware.Handler()), loanHandler)
 
 	// Reservation
 	reservationRepo := reservationRepository.NewRepository()
 	reservationUC := reservationUseCase.NewUseCase(dbSqlx, reservationRepo)
 	reservationHandler := reservationHttp.NewHandler(reservationUC)
-	reservationHttp.MapRoutes(e.Group("/reservation", jwtMiddleware.Handler()), reservationHandler)
+	reservationHttp.MapRoutes(e.Group(fmt.Sprintf("%s/reservation", basePath), jwtMiddleware.Handler()), reservationHandler)
 
 	// Fine checker worker
 	fineRepo := fineRepository.NewRepository()
